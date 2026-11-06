@@ -18,10 +18,35 @@ const small={'ゃ':'や','ゅ':'ゆ','ょ':'よ','ぁ':'あ','ぃ':'い','ぅ':'
 function setPrompt(s){$('prompt').textContent=s}function currentPlayer(){return (turn%2===0?first:(first==='child'?'parent':'child'))}function turnUI(){const active=mode!=='collect';$('turn').classList.toggle('hidden',!active);if(active)$('turn').textContent=(currentPlayer()==='child'?'こどもの ばん':'おとなの ばん')+(previous?'　「'+lastKana(previous)+'」から':'');$('modeBtn').textContent='あそび：'+({collect:'コレクション',easy:'やさしいしりとり',battle:'たいせんしりとり'}[mode])}
 function sound(){if(!sounds)return;try{audioContext??=new(window.AudioContext||window.webkitAudioContext)();let o=audioContext.createOscillator(),g=audioContext.createGain(),t=audioContext.currentTime;o.type='sine';o.frequency.setValueAtTime(450,t);o.frequency.exponentialRampToValueAtTime(880,t+.18);g.gain.setValueAtTime(.09,t);g.gain.exponentialRampToValueAtTime(.001,t+.32);o.connect(g);g.connect(audioContext.destination);o.start(t);o.stop(t+.33)}catch{}}
 function say(text){if(!tts||!('speechSynthesis'in window))return;try{voiceBusy=true;if(recognitionRunning)recognition.stop();speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=.86;u.pitch=1.15;u.onend=u.onerror=()=>{voiceBusy=false;setTimeout(startRecognition,250)};speechSynthesis.speak(u)}catch{voiceBusy=false}}
-function addCollection(w,img){session.push({word:w,img});const item=document.createElement('div');item.className='col-item';const icon=document.createElement(img?'img':'div');if(img){icon.src=img;icon.alt='';icon.onerror=()=>{icon.replaceWith(Object.assign(document.createElement('div'),{className:'glyph',textContent:WORDS[w]?.[0]||'✦'}))}}else{icon.className='glyph';icon.textContent=WORDS[w]?.[0]||'✦'}item.append(icon,Object.assign(document.createElement('span'),{textContent:w}));$('collection').append(item);item.scrollIntoView({block:'nearest',inline:'end',behavior:'smooth'});const existing=library[w]||{count:0,first:new Date().toISOString()};library[w]={...existing,count:existing.count+1,last:new Date().toISOString(),img:img||existing.img||''};try{localStorage.setItem('kotoba-library-v1',JSON.stringify(library))}catch{setPrompt('保存領域がいっぱいです。図鑑を保存できませんでした')}}
+function addCollection(w,img){session.push({word:w,img});const item=document.createElement('div');item.className='col-item';const icon=document.createElement(img?'img':'div');if(img){icon.src=img;icon.alt='';icon.onerror=()=>{icon.replaceWith(Object.assign(document.createElement('div'),{className:'glyph',textContent:inferredGlyph(w).emoji}))}}else{icon.className='glyph';icon.textContent=inferredGlyph(w).emoji}item.append(icon,Object.assign(document.createElement('span'),{textContent:w}));$('collection').append(item);item.scrollIntoView({block:'nearest',inline:'end',behavior:'smooth'});const existing=library[w]||{count:0,first:new Date().toISOString()};library[w]={...existing,count:existing.count+1,last:new Date().toISOString(),img:img||existing.img||''};try{localStorage.setItem('kotoba-library-v1',JSON.stringify(library))}catch{setPrompt('保存領域がいっぱいです。図鑑を保存できませんでした')}}
 // Wikipedia is used only when no local 3D/emoji illustration is available.
 // Exact Japanese article matches only: unrelated search hits are intentionally rejected.
 let photoRequestId=0;
+const categoryFallbacks=[
+ ['🐾','どうぶつ',/犬|猫|鳥|魚|虫|うさぎ|ぞう|きりん|くま|さる|かば|りす|とら|らいおん|ぱんだ|かぴばら|カピバラ|あざらし|ぺんぎん|ペンギン|わに|へび|いぬ|ねこ|ねずみ|ハムスター|はむすたー|ゴリラ|ごりら|ひつじ|うし|ぶた|うま|かえる|きつね|たぬき|しか|きょうりゅう|恐竜/],
+ ['🍎','くだもの',/りんご|みかん|いちご|ぶどう|ばなな|バナナ|めろん|メロン|もも|なし|れもん|レモン|キウイ|きうい|ぱいなっぷる|パイナップル|まんごー|マンゴー|フルーツ|ふるーつ/],
+ ['🥬','やさい',/やさい|野菜|きゃべつ|キャベツ|れたす|レタス|ぱせり|パセリ|にんじん|たまねぎ|じゃがいも|ぴーまん|ピーマン|なす|とまと|トマト|きゅうり|だいこん|ほうれんそう|ブロッコリー|ぶろっこりー/],
+ ['🚗','のりもの',/くるま|車|バス|ばす|電車|でんしゃ|じてんしゃ|自転車|トラック|とらっく|タクシー|たくしー|飛行機|ひこうき|船|ふね|新幹線|しんかんせん|ロケット|ろけっと|ヘリコプター|へりこぷたー/],
+ ['🍽️','たべもの',/ごはん|ぱん|パン|おかし|お菓子|あいす|アイス|ケーキ|けーき|うどん|らーめん|ラーメン|そば|すし|寿司|ぴざ|ピザ|たまご|卵|にく|肉|さかな|魚|おにぎり|ぎょうざ|餃子|スープ|すーぷ/],
+ ['🧸','おもちゃ',/おもちゃ|玩具|ぬいぐるみ|にんぎょう|人形|つみき|積み木|ぶろっく|ブロック|ぱずる|パズル|ぼーる|ボール|あそび|遊び|しゃぼん|ふうせん|風船/],
+ ['🌼','しぜん',/はな|花|くさ|草|き|木|はっぱ|葉|さくら|桜|ひまわり|たんぽぽ|ちゅーりっぷ|チューリップ|ゆき|雪|あめ|雨|くも|雲|そら|空|ほし|星|つき|月|たいよう|太陽|うみ|海|やま|山/],
+ ['👕','おようふく',/ふく|服|くつ|靴|ぼうし|帽子|ずぼん|ズボン|しゃつ|シャツ|こーと|コート|すかーと|スカート|どれす|ドレス|くつした|靴下/],
+ ['🏠','おうち',/いえ|家|おうち|おへや|部屋|まど|窓|どあ|ドア|おふろ|お風呂|といれ|トイレ|だいどころ|台所|べっど|ベッド|まくら|枕|いす|椅子|つくえ|机/]
+];
+function inferredGlyph(word){
+ const normalized=word.normalize('NFKC').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96));
+ const exact=WORDS[normalized]?.[0]||WORDS[word]?.[0];if(exact)return {emoji:exact,guess:false};
+ const match=Object.entries(WORDS).filter(([key,v])=>v?.[0]&&key.length>=2&&normalized.includes(key)).sort((a,b)=>b[0].length-a[0].length)[0];
+ if(match&&match[0].length>=3)return {emoji:match[1][0],guess:true};
+ const category=categoryFallbacks.find(([, ,pattern])=>pattern.test(word)||pattern.test(normalized));
+ return category?{emoji:category[0],guess:true}:{emoji:'✨',guess:true};
+}
+function renderInferred(word,waiting=false){
+ const result=inferredGlyph(word);const root=$('empty');root.replaceChildren();
+ const icon=document.createElement('div');icon.className='empty-symbol';icon.textContent=result.emoji;
+ const label=document.createElement('div');label.textContent=waiting?'しゃしんを さがしているよ':result.guess?'イメージだよ':'';
+ root.append(icon,label);root.classList.remove('hidden');$('photo').classList.add('hidden');
+}
 async function wikiImage(word){
  if(imageCache.has(word))return imageCache.get(word);
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),4800);
@@ -36,7 +61,19 @@ async function wikiImage(word){
   const exact=norm(title)===norm(word)||norm(title).replace(/[（(].*?[）)]/g,'')===norm(word);
   const url=exact&&page?.ns===0&&page?.thumbnail?.source||null;
   const safe=typeof url==='string'&&url.startsWith('https://upload.wikimedia.org/')?url:null;
-  imageCache.set(word,safe);return safe;
+  if(safe){imageCache.set(word,safe);return safe}
+  const searchParams=new URLSearchParams({action:'query',format:'json',formatversion:'2',generator:'search',gsrsearch:word,gsrnamespace:'0',gsrlimit:'5',prop:'pageimages',piprop:'thumbnail',pithumbsize:'900',pilicense:'free',origin:'*'});
+  const sr=await fetch('https://ja.wikipedia.org/w/api.php?'+searchParams,{signal:controller.signal});
+  if(!sr.ok)return null;
+  const results=(await sr.json()).query?.pages||[];
+  const clean=x=>norm(x).replace(/[（(].*?[）)]/g,'');
+  const ranked=results.filter(p=>p.ns===0&&p.thumbnail?.source?.startsWith('https://upload.wikimedia.org/')).map(p=>{
+   const title=clean(p.title),query=clean(word);
+   const score=title===query?100:title.startsWith(query)&&query.length>=3?75:title.includes(query)&&query.length>=3?60:query.includes(title)&&title.length>=3?45:0;
+   return {url:p.thumbnail.source,score};
+  }).sort((a,b)=>b.score-a.score);
+  const candidate=ranked[0]?.score>=60?ranked[0].url:null;
+  imageCache.set(word,candidate);return candidate;
  }catch{return null}finally{clearTimeout(timer)}
 }
 function displayPhoto(url,w){
@@ -46,14 +83,11 @@ function displayPhoto(url,w){
 }
 function fetchMissingImage(w){
  const requestId=++photoRequestId;
- $('empty').replaceChildren();
- const waiting=document.createElement('div');waiting.className='empty-symbol';waiting.textContent='🔎';
- const label=document.createElement('div');label.textContent='しゃしんを さがしているよ';
- $('empty').append(waiting,label);
+ renderInferred(w,true);
  wikiImage(w).then(url=>{
   if(requestId!==photoRequestId||$('word').textContent!==w)return;
-  if(url){displayPhoto(url,w);const entry=session.find(x=>x.word===w);if(entry)entry.img=url;const cells=[...$('collection').children];const cell=cells.find(x=>x.lastElementChild?.textContent===w);if(cell){const icon=cell.firstElementChild;if(icon?.tagName!=='IMG'){const img=document.createElement('img');img.src=url;img.alt='';img.onerror=()=>img.replaceWith(Object.assign(document.createElement('div'),{className:'glyph',textContent:'✦'}));icon?.replaceWith(img)}}if(library[w]){library[w].img=url;try{localStorage.setItem('kotoba-library-v1',JSON.stringify(library))}catch{}}}
-  else{$('empty').replaceChildren();const symbol=document.createElement('div');symbol.className='empty-symbol';symbol.textContent='？';const txt=document.createElement('div');txt.textContent=w;$('empty').append(symbol,txt)}
+  if(url){displayPhoto(url,w);const entry=session.find(x=>x.word===w);if(entry)entry.img=url;const cells=[...$('collection').children];const cell=cells.find(x=>x.lastElementChild?.textContent===w);if(cell){const icon=cell.firstElementChild;if(icon?.tagName!=='IMG'){const img=document.createElement('img');img.src=url;img.alt='';img.onerror=()=>img.replaceWith(Object.assign(document.createElement('div'),{className:'glyph',textContent:inferredGlyph(w).emoji}));icon?.replaceWith(img)}}if(library[w]){library[w].img=url;try{localStorage.setItem('kotoba-library-v1',JSON.stringify(library))}catch{}}}
+  else{renderInferred(w,false)}
  });
 }
 async function processWord(raw){const w=normalize(raw);if(!w||w.length>35)return;if(playMode==='quiz'){checkQuiz(w);return}if(magicCommand(w))return;if(busy){queue.push(w);return}busy=true;let msg='';if(mode!=='collect'&&previous){if(mode==='battle'&&session.some(x=>x.word===w))msg='その ことばは つかったよ';else if(firstKana(w)!==lastKana(previous))msg='「'+lastKana(previous)+'」から はじまる ことばを いってね'}if(msg){setPrompt(msg);say(msg);busy=false;return}const isBattleEnd=mode==='battle'&&lastKana(w)==='ん';const isEasyN=mode==='easy'&&lastKana(w)==='ん';$('word').textContent=w;$('effect').classList.remove('flash');void $('effect').offsetWidth;$('effect').classList.add('flash');sound();animalVoice(w);magicColor=null;$('empty').style.transform='';$('stage').style.removeProperty('--magic-tint');++photoRequestId;let has3D=show3D(w),imageUrl='';if(!has3D){$('photo').classList.add('hidden');$('empty').classList.remove('hidden');const emoji=WORDS[w]?.[0];$('empty').replaceChildren();if(emoji){const symbol=document.createElement('div');symbol.className='empty-symbol';symbol.textContent=emoji;$('empty').append(symbol)}else{fetchMissingImage(w)}}if(!session.some(x=>x.word===w)){addCollection(w,imageUrl);rewardWord(w)}if(mode!=='collect'){previous=w;turn++;turnUI()}if(isBattleEnd){setPrompt('「ん」で おわった！ '+(currentPlayer()==='child'?'おとな':'こども')+'の かち！');say('んでおわったよ。おしまい！');previous='';turn=0;turnUI()}else if(isEasyN){setPrompt('「ん」で おわったね。つぎは すきな ことばを いってね');previous='';turnUI();say(w)}else{setPrompt(mode==='collect'?'つぎの ことばを いってね':'つぎは「'+lastKana(w)+'」から はじまる ことば！');say(w)}busy=false;if(queue.length)processWord(queue.shift())}
@@ -75,4 +109,4 @@ function magicCommand(w){const c={'あか':0xf34343,'あお':0x3899fa,'きいろ
 
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;function setupRecognition(){if(!SpeechRecognition){$('micState').textContent='音声認識に未対応';setPrompt('このブラウザは音声認識に対応していません。ことばを入力してください');return}recognition=new SpeechRecognition();recognition.lang='ja-JP';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=3;recognition.onresult=e=>{if(voiceBusy)return;for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){let text=e.results[i][0].transcript.trim();if(text)processWord(text)}}};recognition.onstart=()=>{recognitionRunning=true;$('micState').textContent='● きいているよ';$('micState').classList.add('on');$('startBtn').textContent='■ マイクをとめる'};recognition.onend=()=>{recognitionRunning=false;$('micState').textContent='● マイク待機中';$('micState').classList.remove('on');if(listeningWanted&&!voiceBusy)setTimeout(startRecognition,180)};recognition.onerror=e=>{if(['not-allowed','service-not-allowed'].includes(e.error)){listeningWanted=false;$('micState').textContent='マイクの許可が必要';setPrompt('マイクを許可するか、ことばを入力してください')}else if(e.error==='network'){setPrompt('音声認識に接続できません。ことばを入力してください')}}}
 function startRecognition(){if(!listeningWanted||voiceBusy||recognitionRunning||!recognition)return;try{recognition.start()}catch{}}function toggleMic(){if(!recognition){setupRecognition();if(!recognition)return}listeningWanted=!listeningWanted;if(listeningWanted){startRecognition()}else{try{recognition.stop()}catch{}$('startBtn').textContent='🎤 マイクをはじめる';$('micState').textContent='● マイク停止'}}
-$('startBtn').onclick=toggleMic;$('modeBtn').onclick=()=>$('settings').showModal();$('settingsBtn').onclick=()=>$('settings').showModal();$('libraryBtn').onclick=()=>{const grid=$('libraryGrid');grid.replaceChildren();for(const [w,d] of Object.entries(library)){const cell=document.createElement('div');cell.className='library-item';{const g=document.createElement('div');g.className='glyph';g.textContent=WORDS[w]?.[0]||'？';cell.append(g)}const label=document.createElement('div');label.textContent=w+' ×'+d.count;cell.append(label);grid.append(cell)}$('libraryCount').textContent=Object.keys(library).length+'こ';$('library').showModal()};$('helpBtn').onclick=()=>$('manual').showModal();document.querySelectorAll('dialog .close').forEach(b=>b.onclick=()=>b.closest('dialog').close());$('manualForm').onsubmit=e=>{e.preventDefault();const v=$('manualWord').value;$('manualWord').value='';$('manual').close();processWord(v)};function setMode(v){mode=v;turn=0;previous='';session=[];$('collection').replaceChildren();$('word').textContent='';if(currentObject){scene.remove(currentObject);currentObject=null}$('photo').classList.add('hidden');$('empty').classList.remove('hidden');$('empty').innerHTML='<div class="empty-symbol">✦</div><div>ことばを いってみよう</div><small>「りんご」「ぞう」「くるま」</small>';turnUI();setPrompt(mode==='collect'?'ことばを いってね':'最初の ことばを いってね')}$('mode').onchange=e=>setMode(e.target.value);$('first').onchange=e=>{first=e.target.value;turnUI()};$('tts').onchange=e=>tts=e.target.checked;$('sounds').onchange=e=>sounds=e.target.checked;$('resetSession').onclick=()=>{setMode(mode);$('settings').close()};$('playMode').onchange=e=>selectPlayMode(e.target.value);$('nextQuiz').onclick=()=>newQuiz();setupRecognition();turnUI();selectPlayMode('words');
+$('startBtn').onclick=toggleMic;$('modeBtn').onclick=()=>$('settings').showModal();$('settingsBtn').onclick=()=>$('settings').showModal();$('libraryBtn').onclick=()=>{const grid=$('libraryGrid');grid.replaceChildren();for(const [w,d] of Object.entries(library)){const cell=document.createElement('div');cell.className='library-item';{const g=document.createElement('div');g.className='glyph';g.textContent=inferredGlyph(w).emoji;cell.append(g)}const label=document.createElement('div');label.textContent=w+' ×'+d.count;cell.append(label);grid.append(cell)}$('libraryCount').textContent=Object.keys(library).length+'こ';$('library').showModal()};$('helpBtn').onclick=()=>$('manual').showModal();document.querySelectorAll('dialog .close').forEach(b=>b.onclick=()=>b.closest('dialog').close());$('manualForm').onsubmit=e=>{e.preventDefault();const v=$('manualWord').value;$('manualWord').value='';$('manual').close();processWord(v)};function setMode(v){mode=v;turn=0;previous='';session=[];$('collection').replaceChildren();$('word').textContent='';if(currentObject){scene.remove(currentObject);currentObject=null}$('photo').classList.add('hidden');$('empty').classList.remove('hidden');$('empty').innerHTML='<div class="empty-symbol">✦</div><div>ことばを いってみよう</div><small>「りんご」「ぞう」「くるま」</small>';turnUI();setPrompt(mode==='collect'?'ことばを いってね':'最初の ことばを いってね')}$('mode').onchange=e=>setMode(e.target.value);$('first').onchange=e=>{first=e.target.value;turnUI()};$('tts').onchange=e=>tts=e.target.checked;$('sounds').onchange=e=>sounds=e.target.checked;$('resetSession').onclick=()=>{setMode(mode);$('settings').close()};$('playMode').onchange=e=>selectPlayMode(e.target.value);$('nextQuiz').onclick=()=>newQuiz();setupRecognition();turnUI();selectPlayMode('words');
