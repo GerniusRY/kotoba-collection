@@ -106,7 +106,7 @@ function dragonArt(){
  const stage=dragonStage(),cracks=Math.min(4,petLevel);
  if(stage==='egg'){
   const paths=['M153 48l-15 32 20 17-18 28','M91 131l29 13-15 26 22 15','M229 126l-28 18 14 24-25 18','M130 227l24-26 22 21 20-16'];
-  return '<svg class="dragon-svg" viewBox="0 0 320 300" aria-label="魔法の卵"><defs><radialGradient id="eggLight" cx="32%" cy="25%" r="80%"><stop stop-color="#fffaf0"/><stop offset=".48" stop-color="#b7e4e9"/><stop offset="1" stop-color="#507ea5"/></radialGradient></defs><ellipse cx="160" cy="280" rx="106" ry="12" fill="#071527" opacity=".5"/><ellipse cx="160" cy="153" rx="89" ry="126" fill="url(#eggLight)" stroke="#ccefff" stroke-width="3"/><ellipse cx="125" cy="100" rx="18" ry="48" fill="#fff" opacity=".26" transform="rotate(24 125 100)"/>'+paths.slice(0,cracks).map(p=>'<path d="'+p+'" stroke="#294c70" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>').join('')+'</svg>';
+  return '<svg class="dragon-svg" viewBox="0 0 320 300" aria-label="魔法の卵"><defs><radialGradient id="eggLight" cx="32%" cy="25%" r="80%"><stop stop-color="#fffaf0"/><stop offset=".48" stop-color="#e7f4ff"/><stop offset="1" stop-color="#8eaed5"/></radialGradient></defs><ellipse cx="160" cy="280" rx="106" ry="12" fill="#071527" opacity=".5"/><ellipse cx="160" cy="153" rx="89" ry="126" fill="url(#eggLight)" stroke="#fff4d6" stroke-width="3"/><ellipse cx="125" cy="100" rx="18" ry="48" fill="#fff" opacity=".26" transform="rotate(24 125 100)"/>'+paths.slice(0,cracks).map(p=>'<path d="'+p+'" stroke="#294c70" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>').join('')+'</svg>';
  }
  return '';
 }
