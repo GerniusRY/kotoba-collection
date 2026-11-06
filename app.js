@@ -197,6 +197,7 @@ function dragonGrowthLabel(n){
 }
 function nextDragonQuestion(){
  if(playMode!=='pet')return;
+ if(petLevel>=100){dragonPhase='reward';dragonFeedback='100もん クリア！ でんせつの ドラゴン';showGame();setPrompt(dragonFeedback);return}
  dragonPhase='question';dragonFeedback='';
  const choices=DRAGON_QUIZ.filter(w=>w!==dragonLast);
  dragonQuestion=choices[Math.floor(Math.random()*choices.length)];
