@@ -10,7 +10,7 @@ function mat(color,roughness=.4,metalness=0){return new THREE.MeshStandardMateri
 function make3D(type){const g=new THREE.Group();if(type==='apple'||type==='orange'){sphere(g,0,0,0,1.2,1.12,1.1,type==='apple'?0xc92320:0xf58b0d);cyl(g,0,1.13,0,.07,.09,.42,0x5b3b19);const leaf=sphere(g,.35,1.27,0,.4,.11,.2,0x398b35);leaf.rotation.z=.35}else if(type==='strawberry'){const b=new THREE.Mesh(new THREE.ConeGeometry(1.2,2.2,48),mat(0xe52e31,.65));b.rotation.z=Math.PI;g.add(b);for(let i=0;i<55;i++){let a=i*2.399,yy=-.85+(i%11)*.16,rr=.9*Math.max(.2,1-Math.abs(yy)/1.3);sphere(g,Math.cos(a)*rr,yy,Math.sin(a)*rr,.045,.06,.04,0xf7e5a2)}for(let i=0;i<6;i++){const l=sphere(g,Math.cos(i)*.45,1,Math.sin(i)*.45,.5,.08,.18,0x358a32);l.rotation.y=i}}else if(type==='sun'){sphere(g,0,0,0,1.05,1.05,1.05,0xffc928);for(let i=0;i<12;i++){const a=i*Math.PI/6;const ray=new THREE.Mesh(new THREE.ConeGeometry(.22,.7,12),mat(0xffdc47));ray.position.set(Math.cos(a)*1.5,Math.sin(a)*1.5,0);ray.rotation.z=a-Math.PI/2;g.add(ray)}}else if(type==='tree'){cyl(g,0,-.9,0,.19,.3,2,0x7c4d2d);sphere(g,0,.7,0,1.05,1.15,.95,0x267b38);sphere(g,-.55,.15,.25,.7,.7,.65,0x348e40);sphere(g,.6,.25,-.2,.65,.8,.7,0x2f873e)}else if(type==='car'){const body=new THREE.Mesh(new THREE.BoxGeometry(3, .7,1.5),mat(0xd52728,.28,.3));body.position.y=-.3;g.add(body);const roof=new THREE.Mesh(new THREE.BoxGeometry(1.65,.6,1.35),mat(0xe34d48,.27,.25));roof.position.set(-.15,.3,0);g.add(roof);for(const x of [-1,1])for(const z of [-.8,.8]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.2,32),mat(0x17191c,.95));wheel.rotation.x=Math.PI/2;wheel.position.set(x,-.72,z);g.add(wheel)}for(const z of [-.76,.76]){const glass=new THREE.Mesh(new THREE.BoxGeometry(1.2,.42,.03),mat(0x80bcd5,.12,.3));glass.position.set(-.15,.33,z);g.add(glass)}}else if(type==='parsley'){const stem=mat(0x4e9a3b,.55);const leaf=mat(0x278343,.7);for(let i=0;i<9;i++){const a=i*2.399;const radius=.35+(i%3)*.16;const x=Math.cos(a)*radius,z=Math.sin(a)*radius;const h=.85+(i%4)*.18;const stalk=new THREE.Mesh(new THREE.CylinderGeometry(.025,.045,h,10),stem);stalk.position.set(x*.35,-.65+h*.5,z*.35);stalk.rotation.z=-x*.28;g.add(stalk);for(let j=0;j<5;j++){const theta=a+j*1.256;const lx=x+Math.cos(theta)*.27,lz=z+Math.sin(theta)*.27;const m=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),leaf);m.position.set(lx,-.65+h+(j%2)*.11,lz);m.scale.set(.32,.15,.27);g.add(m)}}g.rotation.x=-.2}else if(type==='trumpet'){const gold=mat(0xe8b331,.2,.65);const dark=mat(0x8e6519,.25,.55);function tube(a,b,r=.085){const d=new THREE.Vector3().subVectors(new THREE.Vector3(...b),new THREE.Vector3(...a));const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),16),gold);m.position.copy(new THREE.Vector3(...a).add(new THREE.Vector3(...b)).multiplyScalar(.5));m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());g.add(m)}tube([-1.55,.2,0],[.85,.2,0],.12);tube([-1.4,-.4,0],[.4,-.4,0],.075);tube([-1.4,-.4,0],[-1.4,.2,0],.075);tube([.4,-.4,0],[.4,.2,0],.075);const bell=new THREE.Mesh(new THREE.CylinderGeometry(.58,.13,.95,48,1,true),gold);bell.rotation.z=-Math.PI/2;bell.position.set(1.28,.2,0);g.add(bell);const rim=new THREE.Mesh(new THREE.TorusGeometry(.58,.055,12,48),gold);rim.rotation.y=Math.PI/2;rim.position.set(1.76,.2,0);g.add(rim);for(const x of [-.65,-.25,.15]){tube([x,.2,0],[x,.85,0],.09);const cap=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.075,24),gold);cap.position.set(x,.89,0);g.add(cap)}const mouth=new THREE.Mesh(new THREE.CylinderGeometry(.15,.1,.3,20),dark);mouth.rotation.z=Math.PI/2;mouth.position.set(-1.7,.2,0);g.add(mouth);g.rotation.y=-.18}else return null;g.scale.setScalar(type==='car'?.95:1.1);return g}
 const meshType=w=>(WORDS[w]||[])[1];
 const imageCache=new Map();function show3D(word){if(currentObject){scene.remove(currentObject);currentObject.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){o.material.map?.dispose();o.material.dispose()}})}currentObject=make3D(meshType(word));if(currentObject){const bounds=new THREE.Box3().setFromObject(currentObject);const center=bounds.getCenter(new THREE.Vector3());const size=bounds.getSize(new THREE.Vector3());for(const child of currentObject.children)child.position.sub(center);currentObject.userData.fitScale=2.7/Math.max(size.x,size.y,size.z,0.01);currentObject.scale.setScalar(.15*currentObject.userData.fitScale);scene.add(currentObject);$('photo').classList.add('hidden');$('empty').classList.add('hidden');return true}return false}
-let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObject){const s=currentObject.scale.x;const target=currentObject.userData.fitScale||1;if(s<target)currentObject.scale.setScalar(Math.min(target,s+(t-lastTime)*.0028));currentObject.rotation.y+=currentObject.userData.isQuizRelief?Math.sin(t*.001)*.0006:Math.min(.02,(t-lastTime)*.0003);currentObject.position.y=Math.sin(t*.002)*.09}if(dragonModel&&playMode==='pet'&&dragonPhase==='reward'){const p=Math.min(100,petLevel);dragonModel.rotation.y=-.14+Math.sin(t*.0006)*(.1+p*.0015);dragonModel.position.y=-.1+(p>=51?.18:0)+Math.sin(t*(p>=61?.004:.0017))*(p>=51?.03+p*.002:.012);dragonModel.rotation.z=p>=80?Math.sin(t*.0019)*.09:0;dragonModel.children.forEach(c=>{if(c.userData?.wing)c.rotation.z=c.userData.side*Math.sin(t*(p>=41?.009:.003))*(p>=41?.05+p*.003:.008);if(c.userData?.fire)c.scale.setScalar(.88+Math.sin(t*.018)*.14)})}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
+let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObject){const s=currentObject.scale.x;const target=currentObject.userData.fitScale||1;if(s<target)currentObject.scale.setScalar(Math.min(target,s+(t-lastTime)*.0028));currentObject.rotation.y+=currentObject.userData.isQuizRelief?Math.sin(t*.001)*.0006:Math.min(.02,(t-lastTime)*.0003);currentObject.position.y=Math.sin(t*.002)*.09}if(dragonModel&&playMode==='pet'){const p=Math.min(100,petLevel);dragonModel.rotation.y=-.14+Math.sin(t*.0006)*(.15+p*.0015);dragonModel.rotation.x=Math.sin(t*.0011)*.045;dragonModel.position.y=-.1+(p>=51?.18:0)+Math.sin(t*(p>=61?.004:.0017))*(p>=51?.03+p*.002:.08);dragonModel.rotation.z=p>=80?Math.sin(t*.0019)*.09:0;dragonModel.children.forEach(c=>{if(c.userData?.wing)c.rotation.z=c.userData.side*Math.sin(t*(p>=41?.009:.003))*(p>=41?.05+p*.003:.008);if(c.userData?.fire)c.scale.setScalar(.88+Math.sin(t*.018)*.14)})}if(dragonSideRenderer&&playMode==='pet'){updateDragonSideSize();dragonSideRenderer.render(dragonSideScene,dragonSideCamera)}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
 function normalize(w){w=w.trim().replace(/[。、！？!?\s]+$/g,'').replace(/^(これは|それは|あれは)/,'').replace(/(です|だよ|だね)$/,'').trim();return ALIASES[w]||w.toLowerCase()}
 function kana(w){return w.normalize('NFKC').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96)).replace(/[^ぁ-ゖー]/g,'')}
 // しりとりは清音・濁音・半濁音を厳密に区別する（例: ご≠こ、ぱ≠は）。
@@ -174,10 +174,56 @@ function buildDragon3D(stage){
  return g;
 }
 let dragonModel=null;
+function buildEgg3D(){
+ const g=new THREE.Group();
+ const shell=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),new THREE.MeshPhysicalMaterial({color:0xe6f2ff,roughness:.25,metalness:.16,clearcoat:.85,clearcoatRoughness:.14}));
+ shell.scale.set(.83,1.13,.78);g.add(shell);
+ const bottom=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),new THREE.MeshStandardMaterial({color:0xa6c7e8,roughness:.38,transparent:true,opacity:.27}));
+ bottom.scale.set(.85,1.15,.8);bottom.position.set(0,-.02,-.035);g.add(bottom);
+ const cracks=Math.min(5,petLevel);
+ for(let j=0;j<cracks;j++){
+  const line=new THREE.Group(),angle=j*Math.PI*2/5;
+  for(let i=0;i<5;i++){
+   const y=.75-i*.23,x=Math.sin(i*2.3+j)*.08;
+   const point=new THREE.Mesh(new THREE.SphereGeometry(.035,8,8),new THREE.MeshBasicMaterial({color:0x426f9d}));
+   point.position.set(x,y,Math.sqrt(Math.max(.05,1-y*y/1.3))*.79+.005);line.add(point);
+  }
+  line.rotation.y=angle;g.add(line);
+ }
+ g.userData.egg=true;return g;
+}
+const dragonSideScene=new THREE.Scene();
+const dragonSideCamera=new THREE.PerspectiveCamera(40,1,.1,100);dragonSideCamera.position.set(0,1.05,7.5);dragonSideCamera.lookAt(0,0,0);
+dragonSideScene.add(new THREE.HemisphereLight(0xf2f8ff,0x54728e,2.3));
+const sideLight=new THREE.DirectionalLight(0xffffff,2.5);sideLight.position.set(-3,5,5);dragonSideScene.add(sideLight);
+let dragonSideRenderer=null,dragonSideCanvas=null;
+function setupDragonSide(){
+ if(dragonSideRenderer)return;
+ dragonSideCanvas=document.createElement('canvas');dragonSideCanvas.id='dragonSideCanvas';
+ $('stage').appendChild(dragonSideCanvas);
+ dragonSideRenderer=new THREE.WebGLRenderer({canvas:dragonSideCanvas,alpha:true,antialias:true});
+ dragonSideRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+ dragonSideRenderer.outputColorSpace=THREE.SRGBColorSpace;
+}
+function updateDragonSideSize(){
+ if(!dragonSideRenderer)return;
+ const r=dragonSideCanvas.getBoundingClientRect();
+ if(r.width>0&&r.height>0){
+  dragonSideRenderer.setSize(r.width,r.height,false);
+  dragonSideCamera.aspect=r.width/r.height;dragonSideCamera.updateProjectionMatrix();
+ }
+}
+function disposeDragonModel(){
+ if(!dragonModel)return;
+ dragonSideScene.remove(dragonModel);
+ dragonModel.traverse(o=>{o.geometry?.dispose();if(o.material){const m=Array.isArray(o.material)?o.material:[o.material];m.forEach(x=>x.dispose())}});
+ dragonModel=null;
+}
 function updateDragon3D(){
- if(dragonModel){scene.remove(dragonModel);dragonModel.traverse(o=>{o.geometry?.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}});dragonModel=null}
- const stage=dragonStage();if(stage==='egg')return;
- dragonModel=buildDragon3D(stage);dragonModel.position.set(0,-.1,0);scene.add(dragonModel);
+ setupDragonSide();disposeDragonModel();
+ dragonModel=dragonStage()==='egg'?buildEgg3D():buildDragon3D(dragonStage());
+ dragonModel.position.set(0,-.1,0);dragonSideScene.add(dragonModel);
+ updateDragonSideSize();
 }
 // Every correct answer advances one of 100 distinct visual states.
 const DRAGON_QUIZ=[["き","🌳"],["りんご","🍎"],["みかん","🍊"],["いちご","🍓"],["くるま","🚗"],["たいよう","☀️"],["ねこ","🐈"],["いぬ","🐕"],["ぞう","🐘"],["うさぎ","🐇"],["ばなな","🍌"],["ぱん","🍞"],["さかな","🐟"],["とり","🐦"],["くま","🐻"],["かさ","☂️"],["くつ","👟"],["ほん","📚"],["いえ","🏠"],["はな","🌸"],["ほし","⭐"],["つき","🌙"],["たまご","🥚"],["とまと","🍅"],["にんじん","🥕"],["すいか","🍉"],["ぶどう","🍇"],["かめ","🐢"],["さる","🐒"],["ぱんだ","🐼"],["ぼうし","🧢"],["でんしゃ","🚃"],["ひこうき","✈️"],["ふね","🚢"],["ばす","🚌"],["きりん","🦒"],["らいおん","🦁"],["とら","🐯"],["うし","🐄"],["うま","🐎"],["ぶた","🐖"],["ひつじ","🐑"],["きつね","🦊"],["りす","🐿️"],["ぺんぎん","🐧"],["かえる","🐸"],["へび","🐍"],["わに","🐊"],["いるか","🐬"],["くじら","🐳"],["かに","🦀"],["たこ","🐙"],["えび","🦐"],["ちょうちょ","🦋"],["はち","🐝"],["きのこ","🍄"],["ぶろっこりー","🥦"],["きゅうり","🥒"],["なす","🍆"],["たまねぎ","🧅"],["じゃがいも","🥔"],["とうもろこし","🌽"],["れもん","🍋"],["もも","🍑"],["さくらんぼ","🍒"],["ぱいなっぷる","🍍"],["おにぎり","🍙"],["ごはん","🍚"],["ぷりん","🍮"],["くっきー","🍪"],["どーなつ","🍩"],["ぴざ","🍕"],["はんばーがー","🍔"],["すし","🍣"],["らーめん","🍜"],["ぎゅうにゅう","🥛"],["すぷーん","🥄"],["ふぉーく","🍴"],["はさみ","✂️"],["えんぴつ","✏️"],["かばん","🎒"],["りぼん","🎀"],["ぼーる","⚽"],["ふうせん","🎈"],["たいこ","🥁"],["ぴあの","🎹"],["しょうぼうしゃ","🚒"],["ぱとかー","🚓"],["きゅうきゅうしゃ","🚑"],["しんかんせん","🚄"],["ろけっと","🚀"],["へりこぷたー","🚁"],["しんごう","🚦"],["ゆきだるま","⛄"],["にじ","🌈"],["かみなり","⚡"],["ひまわり","🌻"],["ちゅーりっぷ","🌷"],["くりすますつりー","🎄"],["らっぱ","🎺"]];
@@ -252,14 +298,13 @@ function showDragonQuestionObject(word){
 }
 function renderDragon(){
  const question=dragonPhase==='question';
- if(dragonModel){scene.remove(dragonModel);dragonModel=null}
+ if(!dragonModel)updateDragon3D();
  if(question){
   if(currentObject)currentObject.visible=true;
   showDragonQuestionObject(dragonQuestion);
   const title=document.createElement('div');title.className='dragon-quiz-question';title.textContent='これ な〜んだ？';gamePanel.append(title);
  }else{
   if(currentObject)currentObject.visible=false;
-  const d=document.createElement('div');d.className='dragon-art '+(dragonStage()==='egg'?'dragon-egg ':'')+(dragonStage()==='adult'?' dragon-adult':'');d.innerHTML=dragonArt();gamePanel.append(d);
   updateDragon3D();
   const title=document.createElement('div');title.className='dragon-caption';title.textContent=dragonFeedback;gamePanel.append(title);
  }
@@ -274,7 +319,7 @@ function renderGamePanel(){gamePanel.replaceChildren();if(playMode==='quiz'){con
 function showGame(){gameLayer.classList.toggle('hidden',playMode==='words');$('nextQuiz').classList.toggle('hidden',playMode!=='quiz');renderGamePanel()}
 function newQuiz(){const pool=Object.keys(WORDS).filter(w=>WORDS[w]?.[0]&&w.length<=7&&kana(w)===w&&WORDS[w][0]!=='✦');const seed=['りんご','ぞう','ねこ','いぬ','くるま','ばなな','ぱんだ','らっぱ','ぱせり','うさぎ','すいか','ひこうき'].filter(w=>pool.includes(w));const candidates=seed.length>=3?seed:pool;quizAnswer=candidates[Math.floor(Math.random()*candidates.length)];quizChoices=[quizAnswer];while(quizChoices.length<3&&candidates.length>=3){const w=candidates[Math.floor(Math.random()*candidates.length)];if(!quizChoices.includes(w)&&localGlyph(w)!==localGlyph(quizAnswer)&&!quizChoices.some(x=>localGlyph(x)===localGlyph(w)))quizChoices.push(w)}quizChoices.sort(()=>Math.random()-.5);quizLocked=false;showGame();setPrompt('「'+quizAnswer+'」は どれかな？ こえで こたえてね')}
 function checkQuiz(w){if(quizLocked)return;if(normalize(w)===quizAnswer){quizLocked=true;playTone(880,.35);setPrompt('せいかい！ '+quizAnswer+'！');gamePanel.classList.add('celebrate');setTimeout(()=>{gamePanel.classList.remove('celebrate');if(playMode==='quiz')newQuiz()},1250)}else{playTone(240,.12);setPrompt('もういちど！ 「'+quizAnswer+'」は どれかな？')}}
-function selectPlayMode(v){if(dragonTimer){clearTimeout(dragonTimer);dragonTimer=null}if(currentObject)currentObject.visible=v!=='pet';if(v!=='pet'&&dragonModel){scene.remove(dragonModel);dragonModel=null}playMode=v;const sel=$('playMode');if(sel)sel.value=v;gameLayer.classList.toggle('hidden',v==='words');if(v==='quiz')newQuiz();else if(v==='pet'){nextDragonQuestion()}else{showGame();setPrompt(v==='words'?'ことばを いってね':'ことばを いって あそぼう')}}
+function selectPlayMode(v){if(dragonTimer){clearTimeout(dragonTimer);dragonTimer=null}if(currentObject)currentObject.visible=v!=='pet';if(v!=='pet')disposeDragonModel();playMode=v;const sel=$('playMode');if(sel)sel.value=v;gameLayer.classList.toggle('hidden',v==='words');if(v==='quiz')newQuiz();else if(v==='pet'){nextDragonQuestion()}else{showGame();setPrompt(v==='words'?'ことばを いってね':'ことばを いって あそぼう')}}
 function rewardWord(w){if(playMode==='quiz'){checkQuiz(w);return true}if(playMode==='pet'){dragonAnswer(w)}else if(playMode==='train'){trainCount++;trainStatus.textContent='🚂 '+trainCount;showGame();if(trainCount%5===0){gamePanel.classList.add('train-go');setTimeout(()=>gamePanel.classList.remove('train-go'),1500)}}else if(playMode==='chest'){chestCount++;if(chestCount>=3){showGame();playTone(990,.35);setTimeout(()=>{chestCount=0;if(playMode==='chest')showGame()},2000)}else showGame()}return false}
 function magicCommand(w){const c={'あか':0xf34343,'あお':0x3899fa,'きいろ':0xffdc37,'みどり':0x45c76a,'ぴんく':0xff8fd0,'むらさき':0xa774ec,'しろ':0xffffff};const cmd=w.replace(/(にしてね|にして|になれ|くして|くなれ)$/,'');if(c[cmd]){magicColor=c[cmd];if(currentObject)currentObject.traverse(o=>{if(o.isMesh&&o.material?.color)o.material.color.setHex(c[cmd])});$('stage').style.setProperty('--magic-tint','#'+c[cmd].toString(16).padStart(6,'0'));setPrompt(cmd+'に なったよ！');playTone(950);return true}if(['おおきくなあれ','おおきくなれ','おおきく','ちいさくなあれ','ちいさくなれ','ちいさく'].includes(w)){const big=w.startsWith('おお');if(currentObject)currentObject.scale.multiplyScalar(big?1.5:.65);const el=$('empty');el.style.transform='scale('+(big?1.45:.7)+')';setPrompt(big?'おおきく なった！':'ちいさく なった！');playTone(big?650:420);return true}if(['とんで','とべ','とんでいけ'].includes(w)){gamePanel.classList.add('train-go');$('empty').classList.add('fly');if(currentObject)currentObject.position.y+=.5;setTimeout(()=>{$('empty').classList.remove('fly');gamePanel.classList.remove('train-go')},1000);setPrompt('とんだ！');return true}return false}
 
