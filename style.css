@@ -140,3 +140,13 @@ html,body{width:100%;height:100%;overflow:hidden}
 .dragon-parent-help{position:absolute;right:8px;bottom:6px;z-index:8;pointer-events:auto!important;background:#29445dbb;color:#dceaff;border:1px solid #7893a9;border-radius:12px;padding:6px 10px;font-size:clamp(10px,2.5dvh,13px);cursor:pointer}
 #stage:has(.dragon-quiz-question) .dragon-help{right:auto;left:6%}
 #stage:has(.dragon-quiz-question) .dragon-parent-help{display:block}
+
+/* Persistent animated 3D pet: separate WebGL scene from question object. */
+#dragonSideCanvas{position:absolute;z-index:4;right:1.5%;bottom:13%;width:clamp(120px,24vw,260px);height:73%;pointer-events:none;display:none;background:transparent}
+#stage:has(.dragon-quiz-question) #dragonSideCanvas{display:block}
+#stage:has(.dragon-caption) #dragonSideCanvas{display:block;left:50%;right:auto;bottom:7%;transform:translateX(-50%);width:min(66vw,80dvh);height:78%;z-index:2}
+#stage:has(.dragon-quiz-question) #scene{left:24%!important;width:min(70dvh,45vw)!important;height:min(70dvh,45vw)!important}
+#stage:has(.dragon-quiz-question) .dragon-parent-help{z-index:9}
+#stage:has(.dragon-caption) .dragon-caption{position:absolute;bottom:3%;left:50%;transform:translateX(-50%);white-space:nowrap;z-index:6}
+#stage:has(.dragon-caption) #scene{opacity:0!important;pointer-events:none}
+@media(orientation:landscape) and (max-height:400px){#dragonSideCanvas{height:70%;bottom:12%}#stage:has(.dragon-caption) #dragonSideCanvas{height:75%}}
