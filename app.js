@@ -111,39 +111,59 @@ function dragonArt(){
  return '';
 }
 function buildDragon3D(stage){
+ // A: pearlescent white / ice-blue dragon, identical character across all stages.
  const g=new THREE.Group(),adult=stage==='adult',young=stage==='young';
- const skin=mat(adult?0x456a88:0x88c9d4,.56,.12),belly=mat(0xe1f1e6,.76),horn=mat(0xe9c788,.35,.12),wing=mat(adult?0x52619b:0x8b8fc8,.65,.05),ridge=mat(0x9b9bd8,.45),eye=mat(0x063c73,.12,.18),pupil=mat(0x031b32,.12),shine=new THREE.MeshBasicMaterial({color:0xffffff}),nostril=mat(0x315b66,.9);
- const add=(geo,material,x,y,z,rx=0,ry=0,rz=0)=>{const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);g.add(m);return m};
- const ball=(x,y,z,a,b,c,m)=>{const o=add(new THREE.SphereGeometry(1,32,22),m,x,y,z);o.scale.set(a,b,c);return o};
- const spike=(x,y,z,r,h,m,rz=0)=>add(new THREE.ConeGeometry(r,h,12),m,x,y,z,0,0,rz);
- const scale=adult?1.14:young?1.03:.87;
- ball(0,-.28,0,.67,.77,.57,skin);ball(0,-.42,.49,.43,.54,.16,belly);
- ball(0,.62,.12,.74,.64,.68,skin);
- ball(0,.36,.72,.48,.31,.55,skin);
- ball(0,.24,1.08,.4,.22,.33,skin);
+ const skin=mat(0xe9f4ff,.32,.12),face=mat(0xf9fcff,.38,.06),belly=mat(0xfff7e9,.78),horn=mat(0xf7dfac,.42,.08),ridge=mat(0xaedaff,.42,.08);
+ const iris=mat(0x36a8ed,.18,.2),pupil=mat(0x102e5c,.1,.14),white=mat(0xffffff,.16,.04),nostril=mat(0x829cae,.9),mouth=mat(0x607e96,.9),claw=mat(0xfff3d8,.36);
+ const add=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);g.add(o);return o};
+ const ball=(x,y,z,a,b,c,m)=>{const o=add(new THREE.SphereGeometry(1,24,16),m,x,y,z);o.scale.set(a,b,c);return o};
+ const cone=(x,y,z,r,h,m,rz=0,rx=0)=>{const o=add(new THREE.ConeGeometry(r,h,10),m,x,y,z);o.rotation.z=rz;o.rotation.x=rx;return o};
+ const stageScale=adult?1.2:young?1.04:.9;
+ // Baby: larger head and eyes; adult: longer body, horns, wings and tail.
+ const headSize=adult?.89:young?.91:1.06,bodySize=adult?1.22:young?1.1:.93;
+ ball(0,-.38,-.06,.61*bodySize,.72*bodySize,.54*bodySize,skin);
+ ball(0,-.48,.45,.41*bodySize,.51*bodySize,.16,belly);
+ ball(0,.64,.09,.73*headSize,.62*headSize,.64*headSize,face);
+ ball(0,.38,.68,.48*headSize,.29*headSize,.52*headSize,face);
+ ball(0,.27,1.03,.4*headSize,.2*headSize,.31*headSize,skin);
+ // Gentle smile, tiny nose, sapphire eyes with distinct highlights.
  for(const side of [-1,1]){
-  ball(side*.38,.64,.69,.19,.23,.12,belly);
-  ball(side*.39,.68,.80,.135,.17,.095,eye);
-  ball(side*.40,.68,.875,.066,.11,.038,pupil);
-  ball(side*.37,.75,.912,.037,.045,.018,shine);
-  ball(side*.19,.3,1.36,.036,.028,.028,nostril);
-  const hornObj=spike(side*.47,1.18,-.09,.17,.66,horn,-side*.35);
-  hornObj.rotation.x=-.3;
-  spike(side*.55,.97,-.35,.14,.38,ridge,-side*.65);
-  ball(side*.52,-.88,.35,.3,.22,.35,skin);
-  for(let toe=-1;toe<=1;toe++)spike(side*.52+toe*.14,-1.03,.66,.045,.19,horn,Math.PI/2);
-  ball(side*.64,-.22,.12,.24,.45,.25,skin).rotation.z=side*.28;
-  const w=new THREE.Group();w.position.set(side*.5,.27,-.18);g.add(w);
-  const shape=new THREE.Shape();shape.moveTo(0,0);shape.quadraticCurveTo(side*.42,.45,side*1.05,.72);shape.quadraticCurveTo(side*1.28,.23,side*1.22,-.23);shape.quadraticCurveTo(side*.92,-.05,side*.78,-.42);shape.quadraticCurveTo(side*.5,-.12,side*.27,-.38);shape.quadraticCurveTo(side*.15,-.15,0,0);
-  const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape,16),new THREE.MeshStandardMaterial({color:adult?0x7072b6:0xaaa2dc,side:THREE.DoubleSide,roughness:.55,metalness:.05,transparent:true,opacity:.94}));mesh.position.z=-.12;w.add(mesh);
-  const bone=new THREE.Mesh(new THREE.CylinderGeometry(.035,.055,1.2,8),ridge);bone.position.set(side*.51,.33,0);bone.rotation.z=-side*.8;w.add(bone);
-  w.rotation.y=side*.12;w.userData.wing=true;w.userData.side=side;
+  ball(side*.38,.7,.65,.235*headSize,.25*headSize,.13,white);
+  ball(side*.395,.7,.761,.167*headSize,.19*headSize,.077,iris);
+  ball(side*.41,.7,.817,.089*headSize,.14*headSize,.045,pupil);
+  ball(side*.36,.78,.856,.052,.064,.026,white);
+  ball(side*.45,.65,.854,.021,.028,.014,white);
+  ball(side*.19,.3,1.33,.035,.026,.021,nostril);
+  ball(side*.34,.25,1.04,.17,.085,.045,mat(0xf5d8dc,.9));
+  cone(side*.43,1.21,-.1,adult?.19:.13,adult?.72:.46,horn,-side*(adult?.43:.3),-.16);
+  cone(side*.58,.99,-.3,.13,adult?.38:.28,ridge,-side*.65);
+  // Four sturdy paws with ivory claws.
+  ball(side*.53,-.9,.31,.3,.22,.36,skin);
+  for(let toe=-1;toe<=1;toe++)cone(side*.53+toe*.145,-1.045,.61,.048,.18,claw,Math.PI/2);
+  ball(side*.65,-.23,.16,.235,.43,.23,skin).rotation.z=side*.27;
+  ball(side*.72,-.53,.35,.19,.16,.23,skin);
+  // Curved iridescent lavender wing with pale leading-edge spar.
+  const wing=new THREE.Group();wing.position.set(side*.49,.23,-.19);wing.userData.wing=true;wing.userData.side=side;g.add(wing);
+  const reach=adult?1.47:young?1.2:.96;
+  const sh=new THREE.Shape();sh.moveTo(0,0);
+  sh.quadraticCurveTo(side*reach*.4,reach*.68,side*reach,reach*.7);
+  sh.quadraticCurveTo(side*reach*1.13,reach*.24,side*reach*.97,-reach*.27);
+  sh.quadraticCurveTo(side*reach*.73,-reach*.05,side*reach*.59,-reach*.37);
+  sh.quadraticCurveTo(side*reach*.33,-reach*.12,side*reach*.18,-reach*.31);
+  sh.quadraticCurveTo(side*reach*.09,-reach*.12,0,0);
+  const membrane=new THREE.Mesh(new THREE.ShapeGeometry(sh,14),new THREE.MeshStandardMaterial({color:adult?0x9ca5f2:0xc5b9f2,side:THREE.DoubleSide,roughness:.46,metalness:.12,transparent:true,opacity:.94}));
+  membrane.position.z=-.15;wing.add(membrane);
+  const bone=new THREE.Mesh(new THREE.CylinderGeometry(.025,.045,reach*1.1,8),ridge);bone.position.set(side*reach*.48,reach*.35,-.13);bone.rotation.z=-side*.8;wing.add(bone);
+  wing.rotation.y=side*.14;
  }
- for(let i=0;i<7;i++){spike(0,.98-i*.23,-.54,.14-i*.007,.32,ridge,.1)}
- for(let i=0;i<5;i++){ball(0,-.76-i*.12,-.44-i*.21,.31-i*.04,.26-i*.03,.29-i*.02,skin);spike(0,-.58-i*.16,-.65-i*.21,.11-i*.01,.24,ridge)}
- const tip=spike(0,-1.27,-1.57,.18,.4,ridge);tip.rotation.x=-.65;
- if(adult){spike(0,1.29,.22,.14,.38,horn);ball(0,.17,1.32,.16,.08,.08,belly)}
- g.scale.setScalar(scale);g.rotation.y=-.14;return g;
+ // Small pearl scales and gradually larger dorsal fins.
+ for(let i=0;i<(adult?9:7);i++)cone(0,.98-i*.23,-.55,.11+i*.003,.2+i*.01,ridge,.08);
+ // Thick tapering tail.
+ for(let i=0;i<6;i++){const t=i/6;ball(0,-.72-i*.12,-.46-i*.22,.29*(1-t)+.045,.25*(1-t)+.045,.29*(1-t)+.045,skin)}
+ cone(0,-1.34,-1.71,.17,.37,ridge,0,-.75);
+ if(adult){cone(0,1.37,.15,.12,.34,horn);cone(-.2,.98,-.46,.1,.3,ridge);cone(.2,.98,-.46,.1,.3,ridge)}
+ g.scale.setScalar(stageScale);g.rotation.y=-.12;
+ return g;
 }
 let dragonModel=null;
 function updateDragon3D(){
@@ -155,7 +175,7 @@ function renderDragon(){
  if(currentObject)currentObject.visible=false;
  const d=document.createElement('div');d.className='dragon-art '+(dragonStage()==='egg'?'dragon-egg ':'')+(petLevel===5?'dragon-hatch':'')+(dragonStage()==='adult'?' dragon-adult':'');d.innerHTML=dragonArt();gamePanel.append(d);updateDragon3D();
  const title=document.createElement('div');title.className='dragon-caption';
- const stage=dragonStage();title.textContent=stage==='egg'?'たまごに ヒビが はいってきた！':stage==='baby'?'ドラゴンの あかちゃんが うまれた！':stage==='young'?'ドラゴンが おおきく なった！':'つよい ドラゴンに せいちょう！';
+ const stage=dragonStage();title.textContent=stage==='egg'?'しろがねドラゴンの たまご':stage==='baby'?'ドラゴンの あかちゃんが うまれた！':stage==='young'?'ドラゴンが おおきく なった！':'つよい ドラゴンに せいちょう！';
  if(petLevel===0)title.textContent='ことばを あつめて たまごを わろう！';
  const count=document.createElement('small');count.textContent='ことば '+petLevel+'こ'+(petLevel<5?' ／ あと'+(5-petLevel)+'こで たんじょう':petLevel<12?' ／ あと'+(12-petLevel)+'こで せいちょう':petLevel<20?' ／ あと'+(20-petLevel)+'こで おとな':' ／ かんせい！');
  gamePanel.append(title,count);
@@ -165,7 +185,7 @@ function showGame(){gameLayer.classList.toggle('hidden',playMode==='words');$('n
 function newQuiz(){const pool=Object.keys(WORDS).filter(w=>WORDS[w]?.[0]&&w.length<=7&&kana(w)===w&&WORDS[w][0]!=='✦');const seed=['りんご','ぞう','ねこ','いぬ','くるま','ばなな','ぱんだ','らっぱ','ぱせり','うさぎ','すいか','ひこうき'].filter(w=>pool.includes(w));const candidates=seed.length>=3?seed:pool;quizAnswer=candidates[Math.floor(Math.random()*candidates.length)];quizChoices=[quizAnswer];while(quizChoices.length<3&&candidates.length>=3){const w=candidates[Math.floor(Math.random()*candidates.length)];if(!quizChoices.includes(w)&&localGlyph(w)!==localGlyph(quizAnswer)&&!quizChoices.some(x=>localGlyph(x)===localGlyph(w)))quizChoices.push(w)}quizChoices.sort(()=>Math.random()-.5);quizLocked=false;showGame();setPrompt('「'+quizAnswer+'」は どれかな？ こえで こたえてね')}
 function checkQuiz(w){if(quizLocked)return;if(normalize(w)===quizAnswer){quizLocked=true;playTone(880,.35);setPrompt('せいかい！ '+quizAnswer+'！');gamePanel.classList.add('celebrate');setTimeout(()=>{gamePanel.classList.remove('celebrate');if(playMode==='quiz')newQuiz()},1250)}else{playTone(240,.12);setPrompt('もういちど！ 「'+quizAnswer+'」は どれかな？')}}
 function selectPlayMode(v){if(currentObject)currentObject.visible=v!=='pet';if(v!=='pet'&&dragonModel){scene.remove(dragonModel);dragonModel=null}playMode=v;const sel=$('playMode');if(sel)sel.value=v;gameLayer.classList.toggle('hidden',v==='words');if(v==='quiz')newQuiz();else{showGame();setPrompt(v==='words'?'ことばを いってね':'ことばを いって あそぼう')}}
-function rewardWord(w){if(playMode==='quiz'){checkQuiz(w);return true}if(playMode==='pet'){const oldStage=dragonStage();petLevel++;try{localStorage.setItem(PET_KEY,String(petLevel))}catch{}petStatus.textContent='🐉 '+petLevel;showGame();if(oldStage!==dragonStage()){playTone(880,.42);gamePanel.classList.add('celebrate');setTimeout(()=>gamePanel.classList.remove('celebrate'),1000)}}else if(playMode==='train'){trainCount++;trainStatus.textContent='🚂 '+trainCount;showGame();if(trainCount%5===0){gamePanel.classList.add('train-go');setTimeout(()=>gamePanel.classList.remove('train-go'),1500)}}else if(playMode==='chest'){chestCount++;if(chestCount>=3){showGame();playTone(990,.35);setTimeout(()=>{chestCount=0;if(playMode==='chest')showGame()},2000)}else showGame()}return false}
+function rewardWord(w){if(playMode==='quiz'){checkQuiz(w);return true}if(playMode==='pet'){const oldStage=dragonStage();petLevel++;try{localStorage.setItem(PET_KEY,String(petLevel))}catch{}petStatus.textContent='🐲 '+petLevel;showGame();if(oldStage!==dragonStage()){playTone(880,.42);gamePanel.classList.add('celebrate');setTimeout(()=>gamePanel.classList.remove('celebrate'),1000)}}else if(playMode==='train'){trainCount++;trainStatus.textContent='🚂 '+trainCount;showGame();if(trainCount%5===0){gamePanel.classList.add('train-go');setTimeout(()=>gamePanel.classList.remove('train-go'),1500)}}else if(playMode==='chest'){chestCount++;if(chestCount>=3){showGame();playTone(990,.35);setTimeout(()=>{chestCount=0;if(playMode==='chest')showGame()},2000)}else showGame()}return false}
 function magicCommand(w){const c={'あか':0xf34343,'あお':0x3899fa,'きいろ':0xffdc37,'みどり':0x45c76a,'ぴんく':0xff8fd0,'むらさき':0xa774ec,'しろ':0xffffff};const cmd=w.replace(/(にしてね|にして|になれ|くして|くなれ)$/,'');if(c[cmd]){magicColor=c[cmd];if(currentObject)currentObject.traverse(o=>{if(o.isMesh&&o.material?.color)o.material.color.setHex(c[cmd])});$('stage').style.setProperty('--magic-tint','#'+c[cmd].toString(16).padStart(6,'0'));setPrompt(cmd+'に なったよ！');playTone(950);return true}if(['おおきくなあれ','おおきくなれ','おおきく','ちいさくなあれ','ちいさくなれ','ちいさく'].includes(w)){const big=w.startsWith('おお');if(currentObject)currentObject.scale.multiplyScalar(big?1.5:.65);const el=$('empty');el.style.transform='scale('+(big?1.45:.7)+')';setPrompt(big?'おおきく なった！':'ちいさく なった！');playTone(big?650:420);return true}if(['とんで','とべ','とんでいけ'].includes(w)){gamePanel.classList.add('train-go');$('empty').classList.add('fly');if(currentObject)currentObject.position.y+=.5;setTimeout(()=>{$('empty').classList.remove('fly');gamePanel.classList.remove('train-go')},1000);setPrompt('とんだ！');return true}return false}
 
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;function setupRecognition(){if(!SpeechRecognition){$('micState').textContent='音声認識に未対応';setPrompt('このブラウザは音声認識に対応していません。ことばを入力してください');return}recognition=new SpeechRecognition();recognition.lang='ja-JP';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=3;recognition.onresult=e=>{if(voiceBusy)return;for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){let text=e.results[i][0].transcript.trim();if(text)processWord(text)}}};recognition.onstart=()=>{recognitionRunning=true;$('micState').textContent='● きいているよ';$('micState').classList.add('on');$('startBtn').textContent='■ マイクをとめる'};recognition.onend=()=>{recognitionRunning=false;$('micState').textContent='● マイク待機中';$('micState').classList.remove('on');if(listeningWanted&&!voiceBusy)setTimeout(startRecognition,180)};recognition.onerror=e=>{if(['not-allowed','service-not-allowed'].includes(e.error)){listeningWanted=false;$('micState').textContent='マイクの許可が必要';setPrompt('マイクを許可するか、ことばを入力してください')}else if(e.error==='network'){setPrompt('音声認識に接続できません。ことばを入力してください')}}}
