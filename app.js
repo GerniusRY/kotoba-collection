@@ -29,7 +29,7 @@ const categoryFallbacks=[
  ['🚗','のりもの',/くるま|車|バス|ばす|電車|でんしゃ|じてんしゃ|自転車|トラック|とらっく|タクシー|たくしー|飛行機|ひこうき|船|ふね|新幹線|しんかんせん|ロケット|ろけっと|ヘリコプター|へりこぷたー/],
  ['🍽️','たべもの',/ごはん|ぱん|パン|おかし|お菓子|あいす|アイス|ケーキ|けーき|うどん|らーめん|ラーメン|そば|すし|寿司|ぴざ|ピザ|たまご|卵|にく|肉|さかな|魚|おにぎり|ぎょうざ|餃子|スープ|すーぷ/],
  ['🧸','おもちゃ',/おもちゃ|玩具|ぬいぐるみ|にんぎょう|人形|つみき|積み木|ぶろっく|ブロック|ぱずる|パズル|ぼーる|ボール|あそび|遊び|しゃぼん|ふうせん|風船/],
- ['🌼','しぜん',/はな|花|くさ|草|き|木|はっぱ|葉|さくら|桜|ひまわり|たんぽぽ|ちゅーりっぷ|チューリップ|ゆき|雪|あめ|雨|くも|雲|そら|空|ほし|星|つき|月|たいよう|太陽|うみ|海|やま|山/],
+ ['🌼','しぜん',/はな|花|くさ|草|木|はっぱ|葉|さくら|桜|ひまわり|たんぽぽ|ちゅーりっぷ|チューリップ|ゆき|雪|雨|雲|そら|空|ほし|星|つき|月|たいよう|太陽|うみ|海|やま|山/],
  ['👕','おようふく',/ふく|服|くつ|靴|ぼうし|帽子|ずぼん|ズボン|しゃつ|シャツ|こーと|コート|すかーと|スカート|どれす|ドレス|くつした|靴下/],
  ['🏠','おうち',/いえ|家|おうち|おへや|部屋|まど|窓|どあ|ドア|おふろ|お風呂|といれ|トイレ|だいどころ|台所|べっど|ベッド|まくら|枕|いす|椅子|つくえ|机/]
 ];
@@ -78,7 +78,7 @@ async function wikiImage(word){
 }
 function displayPhoto(url,w){
  const img=$('photo');img.onload=()=>{if(img.dataset.word!==w)return;img.classList.remove('hidden');$('empty').classList.add('hidden')};
- img.onerror=()=>{if(img.dataset.word===w){img.classList.add('hidden');$('empty').classList.remove('hidden')}};
+ img.onerror=()=>{if(img.dataset.word===w){renderInferred(w,false)}};
  img.dataset.word=w;img.alt=w;img.src=url;
 }
 function fetchMissingImage(w){
@@ -88,7 +88,7 @@ function fetchMissingImage(w){
   if(requestId!==photoRequestId||$('word').textContent!==w)return;
   if(url){displayPhoto(url,w);const entry=session.find(x=>x.word===w);if(entry)entry.img=url;const cells=[...$('collection').children];const cell=cells.find(x=>x.lastElementChild?.textContent===w);if(cell){const icon=cell.firstElementChild;if(icon?.tagName!=='IMG'){const img=document.createElement('img');img.src=url;img.alt='';img.onerror=()=>img.replaceWith(Object.assign(document.createElement('div'),{className:'glyph',textContent:inferredGlyph(w).emoji}));icon?.replaceWith(img)}}if(library[w]){library[w].img=url;try{localStorage.setItem('kotoba-library-v1',JSON.stringify(library))}catch{}}}
   else{renderInferred(w,false)}
- });
+ }).catch(()=>{if(requestId===photoRequestId)renderInferred(w,false)});
 }
 async function processWord(raw){const w=normalize(raw);if(!w||w.length>35)return;if(playMode==='quiz'){checkQuiz(w);return}if(magicCommand(w))return;if(busy){queue.push(w);return}busy=true;let msg='';if(mode!=='collect'&&previous){if(mode==='battle'&&session.some(x=>x.word===w))msg='その ことばは つかったよ';else if(firstKana(w)!==lastKana(previous))msg='「'+lastKana(previous)+'」から はじまる ことばを いってね'}if(msg){setPrompt(msg);say(msg);busy=false;return}const isBattleEnd=mode==='battle'&&lastKana(w)==='ん';const isEasyN=mode==='easy'&&lastKana(w)==='ん';$('word').textContent=w;$('effect').classList.remove('flash');void $('effect').offsetWidth;$('effect').classList.add('flash');sound();animalVoice(w);magicColor=null;$('empty').style.transform='';$('stage').style.removeProperty('--magic-tint');++photoRequestId;let has3D=show3D(w),imageUrl='';if(!has3D){$('photo').classList.add('hidden');$('empty').classList.remove('hidden');const emoji=WORDS[w]?.[0];$('empty').replaceChildren();if(emoji){const symbol=document.createElement('div');symbol.className='empty-symbol';symbol.textContent=emoji;$('empty').append(symbol)}else{fetchMissingImage(w)}}if(!session.some(x=>x.word===w)){addCollection(w,imageUrl);rewardWord(w)}if(mode!=='collect'){previous=w;turn++;turnUI()}if(isBattleEnd){setPrompt('「ん」で おわった！ '+(currentPlayer()==='child'?'おとな':'こども')+'の かち！');say('んでおわったよ。おしまい！');previous='';turn=0;turnUI()}else if(isEasyN){setPrompt('「ん」で おわったね。つぎは すきな ことばを いってね');previous='';turnUI();say(w)}else{setPrompt(mode==='collect'?'つぎの ことばを いってね':'つぎは「'+lastKana(w)+'」から はじまる ことば！');say(w)}busy=false;if(queue.length)processWord(queue.shift())}
 
