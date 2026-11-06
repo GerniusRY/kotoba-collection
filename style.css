@@ -115,3 +115,7 @@ html,body{width:100%;height:100%;overflow:hidden}
 #stage:has(.dragon-art) .game-panel small{position:relative;z-index:3;background:#0c2137b5;padding:2px 9px;border-radius:8px}
 #stage:has(.dragon-art:has(svg:not(:empty))) #scene{opacity:1!important}
 @media (orientation:landscape) and (max-height:400px){#stage:has(.dragon-art) #scene{width:min(90dvh,53vw)!important;height:min(90dvh,53vw)!important;top:43%!important}}
+
+#stage:has(.dragon-egg) .dragon-svg{display:block!important;width:min(68dvh,43vw);height:min(68dvh,43vw);filter:drop-shadow(0 12px 18px #0008)}
+#stage:has(.dragon-egg) #scene{opacity:0!important}
+#stage:has(.dragon-egg) .dragon-art{display:flex;align-items:center;justify-content:center}
