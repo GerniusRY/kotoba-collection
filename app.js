@@ -180,37 +180,38 @@ function updateDragon3D(){
  dragonModel=buildDragon3D(stage);dragonModel.position.set(0,-.1,0);scene.add(dragonModel);
 }
 // Every correct answer advances one of 100 distinct visual states.
-const DRAGON_QUIZ=['りんご','みかん','いちご','たいよう','き','くるま','らっぱ','ぱせり'];
-let dragonQuestion='',dragonPhase='question',dragonTimer=null,dragonLast='',dragonFeedback='';
+const DRAGON_QUIZ=[['き','りんご','みかん','いちご','くるま','たいよう'],['りんご','みかん','いちご','くるま','たいよう','らっぱ'],['りんご','みかん','いちご','くるま','たいよう','らっぱ','ぱせり','き']];
+const DRAGON_ALIASES={'き':['木'],'りんご':['リンゴ'],'みかん':['ミカン'],'いちご':['イチゴ'],'くるま':['車','ぶーぶー'],'たいよう':['太陽','おひさま'],'らっぱ':['ラッパ','トランペット'],'ぱせり':['パセリ']};
+function dragonDifficulty(){return petLevel<30?0:petLevel<65?1:2}
+function dragonSpeechKey(v){return kana(normalize(v)).replace(/ー/g,'').replace(/っ/g,'つ')}
+function dragonSpeechMatch(v){
+ const a=dragonSpeechKey(v),e=dragonSpeechKey(dragonQuestion);if(!a)return false;
+ const aliases=[dragonQuestion,...(DRAGON_ALIASES[dragonQuestion]||[])].map(dragonSpeechKey);
+ if(aliases.some(x=>a===x||(x.length>=2&&a.includes(x)&&a.length<=x.length+5)))return true;
+ if(a.length>=3&&e.length>=3&&Math.abs(a.length-e.length)<=1){let misses=Math.abs(a.length-e.length);for(let i=0;i<Math.min(a.length,e.length);i++)if(a[i]!==e[i])misses++;if(misses<=1)return true}
+ return false;
+}
+let dragonQuestion='',dragonPhase='question',dragonTimer=null,dragonLast='',dragonFeedback='',dragonWrong=0;
 function dragonGrowthLabel(n){
- if(n===0)return 'まほうの たまご';
- if(n<=5)return 'たまごに ヒビが ふえる';
- if(n===6)return 'ドラゴン たんじょう';
- if(n<20)return 'からだが すこしずつ おおきくなる';
- if(n<35)return 'つばさが そだつ';
- if(n<50)return 'つばさを ぱたぱた';
- if(n<65)return 'そらに うかぶ';
- if(n<80)return 'そらを とぶ';
- if(n<95)return 'ほのおの まほう';
- if(n<100)return 'つよい ドラゴンに しんか';
- return '100もん クリア！ でんせつの ドラゴン';
+ const milestones=['たまごに ひび','あかちゃん たんじょう','おめめ ぱっちり','あしと つめ','ながい しっぽ','つのが のびる','キラキラ うろこ','ちいさな つばさ','つばさが ひろがる','ぱたぱた はばたく','おおきく ジャンプ','ふわっと うかぶ','はじめて とんだ','そらで くるり','たかく とべた','はやく とべる','ひかる はなさき','ちいさな ひばな','ちいさな ほのお','つよい ほのお','おおきな つの','りっぱな つめ','ながい つばさ','キラキラの からだ','おおぞらを とぶ'];
+ if(n>=100)return 'でんせつの しろがねドラゴン！';
+ return milestones[Math.min(24,Math.floor((Math.max(1,n)-1)/4))]+'！';
 }
 function nextDragonQuestion(){
  if(playMode!=='pet')return;
  if(petLevel>=100){dragonPhase='reward';dragonFeedback='100もん クリア！ でんせつの ドラゴン';showGame();setPrompt(dragonFeedback);return}
- dragonPhase='question';dragonFeedback='';
- const choices=DRAGON_QUIZ.filter(w=>w!==dragonLast);
+ dragonPhase='question';dragonFeedback='';dragonWrong=0;
+ const choices=DRAGON_QUIZ[dragonDifficulty()].filter(w=>w!==dragonLast);
  dragonQuestion=choices[Math.floor(Math.random()*choices.length)];
  dragonLast=dragonQuestion;
  showGame();setPrompt('これは なあに？ こえで こたえてね');
 }
 function dragonAnswer(w){
  if(playMode!=='pet'||dragonPhase!=='question')return;
- const answer=kana(normalize(w)),expected=kana(dragonQuestion);
- const aliases={'りんご':['アップル'],'みかん':['オレンジ'],'いちご':['ストロベリー'],'たいよう':['おひさま'],'き':['きのき'],'くるま':['じどうしゃ'],'らっぱ':['トランペット'],'ぱせり':['パセリ']};
- const correct=answer===expected||(aliases[dragonQuestion]||[]).some(a=>kana(a)===answer)||answer.includes(expected)&&answer.length<=expected.length+3;
- if(!correct){
-  playTone(190,.22,'sawtooth');setTimeout(()=>playTone(135,.27,'sawtooth'),125);
+ if(!dragonSpeechMatch(w)){
+  dragonWrong++;
+  if(dragonWrong===1){setPrompt('もういちど ゆっくり いってね');return}
+  playTone(190,.19,'sawtooth');setTimeout(()=>playTone(145,.23,'sawtooth'),130);
   dragonFeedback='ぶっぶー！ もういちど';showGame();setPrompt('もういちど いってみよう');return;
  }
  dragonPhase='reward';petLevel=Math.min(100,petLevel+1);
@@ -220,7 +221,7 @@ function dragonAnswer(w){
  dragonFeedback='ピンポン！ '+dragonGrowthLabel(petLevel);
  showGame();setPrompt(dragonFeedback);
  if(dragonTimer)clearTimeout(dragonTimer);
- dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4200:2600);
+ dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4200:2700);
 }
 function renderDragon(){
  const question=dragonPhase==='question';
@@ -237,10 +238,10 @@ function renderDragon(){
  }
  const count=document.createElement('div');count.className='dragon-progress';
  const n=Math.min(100,petLevel);
- count.innerHTML='<span>'+n+' / 100 せいかい</span><div class="dragon-progress-track"><div style="width:'+n+'%"></div></div>';
+ count.innerHTML='<span>'+n+' / 100 せいかい · '+dragonGrowthLabel(Math.max(1,n))+'</span><div class="dragon-progress-track"><div style="width:'+n+'%"></div></div>';
  gamePanel.append(count);
  if(question&&dragonFeedback){const fb=document.createElement('div');fb.className='dragon-incorrect';fb.textContent=dragonFeedback;gamePanel.append(fb)}
- if(question){const hint=document.createElement('div');hint.className='dragon-help';hint.textContent='こえで こたえてね';gamePanel.append(hint)}
+ if(question){const hint=document.createElement('div');hint.className='dragon-help';hint.textContent='こえで こたえてね';gamePanel.append(hint);const assist=document.createElement('button');assist.type='button';assist.className='dragon-parent-help';assist.textContent='おとなの せいかいボタン';assist.onclick=()=>dragonAnswer(dragonQuestion);gamePanel.append(assist)}
 }
 function renderGamePanel(){gamePanel.replaceChildren();if(playMode==='quiz'){const h=document.createElement('div');h.className='quiz-title';h.textContent='どれが「'+quizAnswer+'」かな？';gamePanel.append(h);const options=document.createElement('div');options.className='quiz-options';quizChoices.forEach(w=>{const b=document.createElement('button');b.className='quiz-option';b.textContent=localGlyph(w);b.setAttribute('aria-label',w);b.onclick=()=>checkQuiz(w);options.append(b)});gamePanel.append(options)}else if(playMode==='pet'){renderDragon()}else if(playMode==='train'){const d=document.createElement('div');d.className='train-hero';d.textContent='🚂'+'🚃'.repeat(Math.min(trainCount,7));gamePanel.append(d);const p=document.createElement('div');p.textContent=trainCount>=5?'でんしゃが しゅっぱつ！':'ことばを いうと しゃりょうが ふえるよ';gamePanel.append(p)}else if(playMode==='chest'){const d=document.createElement('div');d.className='chest-hero';d.textContent=chestCount>=3?'🎁':'🧰';gamePanel.append(d);const p=document.createElement('div');p.textContent=chestCount>=3?'たからばこが あいた！':'あと '+(3-chestCount)+'こで たからばこが あくよ';gamePanel.append(p)}}
 function showGame(){gameLayer.classList.toggle('hidden',playMode==='words');$('nextQuiz').classList.toggle('hidden',playMode!=='quiz');renderGamePanel()}
@@ -250,6 +251,6 @@ function selectPlayMode(v){if(dragonTimer){clearTimeout(dragonTimer);dragonTimer
 function rewardWord(w){if(playMode==='quiz'){checkQuiz(w);return true}if(playMode==='pet'){dragonAnswer(w)}else if(playMode==='train'){trainCount++;trainStatus.textContent='🚂 '+trainCount;showGame();if(trainCount%5===0){gamePanel.classList.add('train-go');setTimeout(()=>gamePanel.classList.remove('train-go'),1500)}}else if(playMode==='chest'){chestCount++;if(chestCount>=3){showGame();playTone(990,.35);setTimeout(()=>{chestCount=0;if(playMode==='chest')showGame()},2000)}else showGame()}return false}
 function magicCommand(w){const c={'あか':0xf34343,'あお':0x3899fa,'きいろ':0xffdc37,'みどり':0x45c76a,'ぴんく':0xff8fd0,'むらさき':0xa774ec,'しろ':0xffffff};const cmd=w.replace(/(にしてね|にして|になれ|くして|くなれ)$/,'');if(c[cmd]){magicColor=c[cmd];if(currentObject)currentObject.traverse(o=>{if(o.isMesh&&o.material?.color)o.material.color.setHex(c[cmd])});$('stage').style.setProperty('--magic-tint','#'+c[cmd].toString(16).padStart(6,'0'));setPrompt(cmd+'に なったよ！');playTone(950);return true}if(['おおきくなあれ','おおきくなれ','おおきく','ちいさくなあれ','ちいさくなれ','ちいさく'].includes(w)){const big=w.startsWith('おお');if(currentObject)currentObject.scale.multiplyScalar(big?1.5:.65);const el=$('empty');el.style.transform='scale('+(big?1.45:.7)+')';setPrompt(big?'おおきく なった！':'ちいさく なった！');playTone(big?650:420);return true}if(['とんで','とべ','とんでいけ'].includes(w)){gamePanel.classList.add('train-go');$('empty').classList.add('fly');if(currentObject)currentObject.position.y+=.5;setTimeout(()=>{$('empty').classList.remove('fly');gamePanel.classList.remove('train-go')},1000);setPrompt('とんだ！');return true}return false}
 
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;function setupRecognition(){if(!SpeechRecognition){$('micState').textContent='音声認識に未対応';setPrompt('このブラウザは音声認識に対応していません。ことばを入力してください');return}recognition=new SpeechRecognition();recognition.lang='ja-JP';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=3;recognition.onresult=e=>{if(voiceBusy)return;for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){let text=e.results[i][0].transcript.trim();if(text)processWord(text)}}};recognition.onstart=()=>{recognitionRunning=true;$('micState').textContent='● きいているよ';$('micState').classList.add('on');$('startBtn').textContent='■ マイクをとめる'};recognition.onend=()=>{recognitionRunning=false;$('micState').textContent='● マイク待機中';$('micState').classList.remove('on');if(listeningWanted&&!voiceBusy)setTimeout(startRecognition,180)};recognition.onerror=e=>{if(['not-allowed','service-not-allowed'].includes(e.error)){listeningWanted=false;$('micState').textContent='マイクの許可が必要';setPrompt('マイクを許可するか、ことばを入力してください')}else if(e.error==='network'){setPrompt('音声認識に接続できません。ことばを入力してください')}}}
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;function setupRecognition(){if(!SpeechRecognition){$('micState').textContent='音声認識に未対応';setPrompt('このブラウザは音声認識に対応していません。ことばを入力してください');return}recognition=new SpeechRecognition();recognition.lang='ja-JP';recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=5;recognition.onresult=e=>{if(voiceBusy)return;for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){let alternatives=Array.from(e.results[i]).map(x=>x.transcript.trim()).filter(Boolean);if(playMode==='pet'&&alternatives.length){dragonAnswer(alternatives.find(dragonSpeechMatch)||alternatives[0])}else if(alternatives[0])processWord(alternatives[0])}}};recognition.onstart=()=>{recognitionRunning=true;$('micState').textContent='● きいているよ';$('micState').classList.add('on');$('startBtn').textContent='■ マイクをとめる'};recognition.onend=()=>{recognitionRunning=false;$('micState').textContent='● マイク待機中';$('micState').classList.remove('on');if(listeningWanted&&!voiceBusy)setTimeout(startRecognition,180)};recognition.onerror=e=>{if(['not-allowed','service-not-allowed'].includes(e.error)){listeningWanted=false;$('micState').textContent='マイクの許可が必要';setPrompt('マイクを許可するか、ことばを入力してください')}else if(e.error==='network'){setPrompt('音声認識に接続できません。ことばを入力してください')}}}
 function startRecognition(){if(!listeningWanted||voiceBusy||recognitionRunning||!recognition)return;try{recognition.start()}catch{}}function toggleMic(){if(!recognition){setupRecognition();if(!recognition)return}listeningWanted=!listeningWanted;if(listeningWanted){startRecognition()}else{try{recognition.stop()}catch{}$('startBtn').textContent='🎤 マイクをはじめる';$('micState').textContent='● マイク停止'}}
 $('startBtn').onclick=toggleMic;$('modeBtn').onclick=()=>$('settings').showModal();$('settingsBtn').onclick=()=>$('settings').showModal();$('libraryBtn').onclick=()=>{const grid=$('libraryGrid');grid.replaceChildren();for(const [w,d] of Object.entries(library)){const cell=document.createElement('div');cell.className='library-item';{const g=document.createElement('div');g.className='glyph';g.textContent=inferredGlyph(w).emoji;cell.append(g)}const label=document.createElement('div');label.textContent=w+' ×'+d.count;cell.append(label);grid.append(cell)}$('libraryCount').textContent=Object.keys(library).length+'こ';$('library').showModal()};$('helpBtn').onclick=()=>$('manual').showModal();document.querySelectorAll('dialog .close').forEach(b=>b.onclick=()=>b.closest('dialog').close());$('manualForm').onsubmit=e=>{e.preventDefault();const v=$('manualWord').value;$('manualWord').value='';$('manual').close();processWord(v)};function setMode(v){mode=v;turn=0;previous='';session=[];$('collection').replaceChildren();$('word').textContent='';if(currentObject){scene.remove(currentObject);currentObject=null}$('photo').classList.add('hidden');$('empty').classList.remove('hidden');$('empty').innerHTML='<div class="empty-symbol">✦</div><div>ことばを いってみよう</div><small>「りんご」「ぞう」「くるま」</small>';turnUI();setPrompt(mode==='collect'?'ことばを いってね':'最初の ことばを いってね')}$('mode').onchange=e=>setMode(e.target.value);$('first').onchange=e=>{first=e.target.value;turnUI()};$('tts').onchange=e=>tts=e.target.checked;$('sounds').onchange=e=>sounds=e.target.checked;$('resetSession').onclick=()=>{setMode(mode);$('settings').close()};$('playMode').onchange=e=>selectPlayMode(e.target.value);$('nextQuiz').onclick=()=>newQuiz();petStatus.textContent='🐲 '+Math.min(100,petLevel)+'/100';setupRecognition();turnUI();selectPlayMode('words');
