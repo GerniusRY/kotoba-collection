@@ -33,7 +33,7 @@ async function wikiImage(word){
   const page=data.query?.pages?.[0];
   const title=page?.title||'';
   const norm=x=>x.normalize('NFKC').replace(/[\s　]/g,'').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96)).toLowerCase();
-  const exact=norm(title)===norm(word)||norm(title).replace(/\\（.*?\\）|\\(.*?\\)/g,'')===norm(word);
+  const exact=norm(title)===norm(word)||norm(title).replace(/[（(].*?[）)]/g,'')===norm(word);
   const url=exact&&page?.ns===0&&page?.thumbnail?.source||null;
   const safe=typeof url==='string'&&url.startsWith('https://upload.wikimedia.org/')?url:null;
   imageCache.set(word,safe);return safe;
