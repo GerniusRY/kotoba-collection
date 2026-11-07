@@ -270,7 +270,7 @@ function dragonSpeechMatch(v){
  if(a.length>=3&&e.length>=3&&Math.abs(a.length-e.length)<=1){let misses=Math.abs(a.length-e.length);for(let i=0;i<Math.min(a.length,e.length);i++)if(a[i]!==e[i])misses++;if(misses<=1)return true}
  return false;
 }
-let dragonQuestion='',dragonPhase='question',dragonTimer=null,dragonLast='',dragonFeedback='',dragonWrong=0;
+let dragonQuestion='',dragonPhase='question',dragonTimer=null,dragonLast='',dragonFeedback='',dragonWrong=0,dragonQuestionStarted=0;
 function dragonGrowthLabel(n){
  const milestones=['たまごに ひび','あかちゃん たんじょう','おめめ ぱっちり','あしと つめ','ながい しっぽ','つのが のびる','キラキラ うろこ','ちいさな つばさ','つばさが ひろがる','ぱたぱた はばたく','おおきく ジャンプ','ふわっと うかぶ','はじめて とんだ','そらで くるり','たかく とべた','はやく とべる','ひかる はなさき','ちいさな ひばな','ちいさな ほのお','つよい ほのお','おおきな つの','りっぱな つめ','ながい つばさ','キラキラの からだ','おおぞらを とぶ'];
  if(n>=100)return 'でんせつの しろがねドラゴン！';
@@ -280,8 +280,9 @@ function dragonGrowthLabel(n){
 }
 function nextDragonQuestion(){
  if(playMode!=='pet')return;
+ if(dragonTimer){clearTimeout(dragonTimer);dragonTimer=null}
  if(petLevel>=100){dragonPhase='reward';dragonFeedback='100もん クリア！ でんせつの ドラゴン';showGame();setPrompt(dragonFeedback);return}
- dragonPhase='question';dragonFeedback='';dragonWrong=0;
+ dragonPhase='question';dragonFeedback='';dragonWrong=0;dragonQuestionStarted=Date.now();
  dragonQuestion=DRAGON_QUIZ[Math.min(99,petLevel)][0];
  dragonLast=dragonQuestion;
  showGame();setPrompt('これは なあに？ こえで こたえてね');
@@ -289,6 +290,7 @@ function nextDragonQuestion(){
 function dragonAnswer(w){
  if(playMode!=='pet'||dragonPhase!=='question')return;
  if(!dragonSpeechMatch(w)){
+  if(Date.now()-dragonQuestionStarted<550)return;
   dragonWrong++;
   if(dragonWrong===1){setPrompt('もういちど ゆっくり いってね');return}
   playTone(190,.19,'sawtooth');setTimeout(()=>playTone(145,.23,'sawtooth'),130);
@@ -334,7 +336,7 @@ function makeQuizRelief(word){
 function showDragonQuestionObject(word){
  const hasModel=!!meshType(word);
  if(hasModel){show3D(word);return}
- if(currentObject){scene.remove(currentObject);currentObject.traverse(o=>{o.geometry?.dispose();if(o.material){o.material.map?.dispose();o.material.dispose()}})}
+ if(currentObject){scene.remove(currentObject);currentObject.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){m.map?.dispose();m.dispose()}}})}
  currentObject=makeQuizRelief(word);currentObject.userData.fitScale=1;
  currentObject.scale.setScalar(.15);scene.add(currentObject);
  $('photo').classList.add('hidden');$('empty').classList.add('hidden');
