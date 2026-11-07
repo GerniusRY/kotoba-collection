@@ -138,7 +138,7 @@ function dragonArt(){
 function buildDragon3D(stage){
  // A: pearlescent white / ice-blue dragon, identical character across all stages.
  const g=new THREE.Group(),adult=stage==='adult',young=stage==='young';
- const skin=mat(0xe9f4ff,.32,.12),face=mat(0xf9fcff,.38,.06),belly=mat(0xfff7e9,.78),horn=mat(0xf7dfac,.42,.08),ridge=mat(0xaedaff,.42,.08);
+ const skin=new THREE.MeshPhysicalMaterial({color:0xe5f1ff,roughness:.29,metalness:.12,clearcoat:.65,clearcoatRoughness:.2}),face=new THREE.MeshPhysicalMaterial({color:0xf9fcff,roughness:.31,clearcoat:.7}),belly=mat(0xf5e9df,.66),horn=mat(0xe7d6bb,.35,.08),ridge=mat(0x9ecde9,.35,.18);
  const iris=mat(0x36a8ed,.18,.2),pupil=mat(0x102e5c,.1,.14),white=mat(0xffffff,.16,.04),nostril=mat(0x829cae,.9),mouth=mat(0x607e96,.9),claw=mat(0xfff3d8,.36);
  const add=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);g.add(o);return o};
  const ball=(x,y,z,a,b,c,m)=>{const o=add(new THREE.SphereGeometry(1,24,16),m,x,y,z);o.scale.set(a,b,c);return o};
@@ -181,6 +181,14 @@ function buildDragon3D(stage){
   const bone=new THREE.Mesh(new THREE.CylinderGeometry(.025,.045,reach*1.1,8),ridge);bone.position.set(side*reach*.48,reach*.35,-.13);bone.rotation.z=-side*.8;wing.add(bone);
   wing.rotation.y=side*.14;
  }
+ // Iridescent overlapping scales create depth rather than a smooth toy surface.
+ if(petLevel>=21)for(let row=0;row<7;row++)for(let col=-3;col<=3;col++){
+  const yy=.02-row*.17,xx=col*.155+(row%2)*.075;
+  const radial=1-(xx/.75)**2-(yy+.38)**2/1.2;
+  if(radial<.12)continue;
+  const scale=ball(xx,yy,.49+Math.sqrt(radial)*.075,.085,.105,.022,row%3===0?ridge:skin);
+  scale.rotation.z=col*.06;
+ }
  // Small pearl scales and gradually larger dorsal fins.
  if(petLevel>=28)for(let i=0;i<Math.min(9,1+Math.floor((petLevel-28)/4));i++)cone(0,.98-i*.23,-.55,.11+i*.003,.2+i*.01,ridge,.08);
  // Thick tapering tail.
@@ -201,10 +209,11 @@ function buildDragon3D(stage){
 let dragonModel=null;
 function buildEgg3D(){
  const g=new THREE.Group();
- const shell=new THREE.Mesh(new THREE.SphereGeometry(1,48,32),new THREE.MeshPhysicalMaterial({color:0xe6f2ff,roughness:.25,metalness:.16,clearcoat:.85,clearcoatRoughness:.14}));
+ const shell=new THREE.Mesh(new THREE.SphereGeometry(1,64,48),new THREE.MeshPhysicalMaterial({color:0xd9e9f7,roughness:.24,metalness:.19,clearcoat:1,clearcoatRoughness:.1,iridescence:.6,iridescenceIOR:1.3}));
  shell.scale.set(.83,1.13,.78);g.add(shell);
  const bottom=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),new THREE.MeshStandardMaterial({color:0xa6c7e8,roughness:.38,transparent:true,opacity:.27}));
  bottom.scale.set(.85,1.15,.8);bottom.position.set(0,-.02,-.035);g.add(bottom);
+ for(let i=0;i<32;i++){const angle=i*2.39996,lat=Math.acos(1-2*(i+.5)/32),x=.835*Math.sin(lat)*Math.cos(angle),y=1.13*Math.cos(lat),z=.785*Math.sin(lat)*Math.sin(angle);const fleck=new THREE.Mesh(new THREE.SphereGeometry(.018+(i%3)*.008,8,6),new THREE.MeshBasicMaterial({color:i%3===0?0xfff2d1:0xaedaf7,transparent:true,opacity:.55}));fleck.position.set(x,y,z);g.add(fleck)}
  const cracks=Math.min(5,Math.floor(petLevel/2));
  for(let j=0;j<cracks;j++){
   const line=new THREE.Group(),angle=j*Math.PI*2/5;
@@ -305,9 +314,9 @@ function makeQuizRelief(word){
  ctx.fillText(emoji,256,270);
  const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;
  const group=new THREE.Group();
- const back=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.55,.15,64),mat(0x80b6da,.3,.2));
+ const back=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.55,.15,64),new THREE.MeshPhysicalMaterial({color:0x91bdd9,metalness:.42,roughness:.25,clearcoat:.8}));
  back.rotation.x=Math.PI/2;back.position.z=-.15;group.add(back);
- const face=new THREE.Mesh(new THREE.CircleGeometry(1.51,64),new THREE.MeshStandardMaterial({color:0xf6fbff,roughness:.6,metalness:.02}));
+ const face=new THREE.Mesh(new THREE.CircleGeometry(1.51,64),new THREE.MeshStandardMaterial({color:0xe4f0fa,roughness:.42,metalness:.08}));
  face.position.z=-.05;group.add(face);
  const picture=new THREE.Mesh(new THREE.PlaneGeometry(2.8,2.8),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));
  picture.position.z=.06;group.add(picture);
