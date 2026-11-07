@@ -19,7 +19,7 @@ let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObje
  dragonModel.rotation.y=Math.sin(phase*.58*tempo)*sway+Math.sin(sec*.3+v)*.06;
  dragonModel.rotation.x=Math.sin(phase*.8)*tilt;
  dragonModel.rotation.z=Math.sin(phase*.45)*(.016+(p%4)*.006);
- dragonModel.position.y=-.12+Math.sin(phase*1.2)*(.055+(p%5)*.009)+(p>=56?.17:0);dragonModel.position.x=.65;
+ dragonModel.position.y=-.12+Math.sin(phase*1.2)*(.055+(p%5)*.009)+(p>=56?.17:0);dragonModel.position.x=.8;
  if(isEgg){
   dragonModel.scale.set(1+breath*.025*energy,1+pulse*.033*energy,1+breath*.025*energy);
   dragonModel.rotation.z+=Math.sin(phase*3)*(.015+p*.002);
@@ -35,7 +35,7 @@ let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObje
   if(p>=86){dragonModel.rotation.y+=Math.sin(phase*1.1)*.12}
  }
 }
-if(playMode==='pet'&&currentObject){const quiz=dragonPhase==='question';currentObject.visible=quiz;currentObject.position.x=quiz?-2.5:0;currentObject.position.y=Math.sin(t*.002)*.06;currentObject.scale.setScalar((currentObject.userData.fitScale||1)*(quiz?.56:1))}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
+if(playMode==='pet'&&currentObject){const quiz=dragonPhase==='question';currentObject.visible=quiz;currentObject.position.x=quiz?-2.55:0;currentObject.position.y=Math.sin(t*.0016)*.05;currentObject.rotation.y=Math.sin(t*.0007)*.13;currentObject.scale.setScalar((currentObject.userData.fitScale||1)*(quiz?.64:1))}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
 function normalize(w){w=w.trim().replace(/[。、！？!?\s]+$/g,'').replace(/^(これは|それは|あれは)/,'').replace(/(です|だよ|だね)$/,'').trim();return ALIASES[w]||w.toLowerCase()}
 function kana(w){return w.normalize('NFKC').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96)).replace(/[^ぁ-ゖー]/g,'')}
 // しりとりは清音・濁音・半濁音を厳密に区別する（例: ご≠こ、ぱ≠は）。
@@ -256,7 +256,7 @@ function disposeDragonModel(){
 function updateDragon3D(){
  disposeDragonModel();
  dragonModel=dragonStage()==='egg'?buildEgg3D():buildDragon3D(dragonStage());
- dragonModel.position.set(.65,-.1,0);scene.add(dragonModel);
+ dragonModel.position.set(.8,-.1,0);scene.add(dragonModel);
 }
 // Every correct answer advances one of 100 distinct visual states.
 const DRAGON_QUIZ=[["き","🌳"],["りんご","🍎"],["みかん","🍊"],["いちご","🍓"],["くるま","🚗"],["たいよう","☀️"],["ねこ","🐈"],["いぬ","🐕"],["ぞう","🐘"],["うさぎ","🐇"],["ばなな","🍌"],["ぱん","🍞"],["さかな","🐟"],["とり","🐦"],["くま","🐻"],["かさ","☂️"],["くつ","👟"],["ほん","📚"],["いえ","🏠"],["はな","🌸"],["ほし","⭐"],["つき","🌙"],["たまご","🥚"],["とまと","🍅"],["にんじん","🥕"],["すいか","🍉"],["ぶどう","🍇"],["かめ","🐢"],["さる","🐒"],["ぱんだ","🐼"],["ぼうし","🧢"],["でんしゃ","🚃"],["ひこうき","✈️"],["ふね","🚢"],["ばす","🚌"],["きりん","🦒"],["らいおん","🦁"],["とら","🐯"],["うし","🐄"],["うま","🐎"],["ぶた","🐖"],["ひつじ","🐑"],["きつね","🦊"],["りす","🐿️"],["ぺんぎん","🐧"],["かえる","🐸"],["へび","🐍"],["わに","🐊"],["いるか","🐬"],["くじら","🐳"],["かに","🦀"],["たこ","🐙"],["えび","🦐"],["ちょうちょ","🦋"],["はち","🐝"],["きのこ","🍄"],["ぶろっこりー","🥦"],["きゅうり","🥒"],["なす","🍆"],["たまねぎ","🧅"],["じゃがいも","🥔"],["とうもろこし","🌽"],["れもん","🍋"],["もも","🍑"],["さくらんぼ","🍒"],["ぱいなっぷる","🍍"],["おにぎり","🍙"],["ごはん","🍚"],["ぷりん","🍮"],["くっきー","🍪"],["どーなつ","🍩"],["ぴざ","🍕"],["はんばーがー","🍔"],["すし","🍣"],["らーめん","🍜"],["ぎゅうにゅう","🥛"],["すぷーん","🥄"],["ふぉーく","🍴"],["はさみ","✂️"],["えんぴつ","✏️"],["かばん","🎒"],["りぼん","🎀"],["ぼーる","⚽"],["ふうせん","🎈"],["たいこ","🥁"],["ぴあの","🎹"],["しょうぼうしゃ","🚒"],["ぱとかー","🚓"],["きゅうきゅうしゃ","🚑"],["しんかんせん","🚄"],["ろけっと","🚀"],["へりこぷたー","🚁"],["しんごう","🚦"],["ゆきだるま","⛄"],["にじ","🌈"],["かみなり","⚡"],["ひまわり","🌻"],["ちゅーりっぷ","🌷"],["くりすますつりー","🎄"],["らっぱ","🎺"]];
@@ -301,26 +301,34 @@ function dragonAnswer(w){
  dragonFeedback='ピンポン！ '+dragonGrowthLabel(petLevel);
  showGame();setPrompt(dragonFeedback);
  if(dragonTimer)clearTimeout(dragonTimer);
- dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4800:petLevel===11?2400:1250);
+ dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4800:petLevel===11?2100:1350);
 }
 // Every question has a dedicated pictogram on a shaded, rotating 3D display.
 // Existing hand-built 3D meshes take priority; the rest use a textured 3D relief.
 function makeQuizRelief(word){
  const pair=DRAGON_QUIZ.find(x=>x[0]===word),emoji=pair?.[1]||'✨';
- const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
+ const canvas=document.createElement('canvas');canvas.width=768;canvas.height=768;
  const ctx=canvas.getContext('2d');
- ctx.clearRect(0,0);ctx.textAlign='center';ctx.textBaseline='middle';
- ctx.font='350px "Apple Color Emoji","Noto Color Emoji",sans-serif';
- ctx.fillText(emoji,256,270);
+ const gradient=ctx.createRadialGradient(300,250,35,384,384,500);
+ gradient.addColorStop(0,'#e7f5ff');gradient.addColorStop(.7,'#92bbd9');gradient.addColorStop(1,'#244b74');
+ ctx.fillStyle=gradient;ctx.fillRect(0,0,768,768);
+ // Soft studio light, ground shadow, and large clean illustration.
+ const shadow=ctx.createRadialGradient(384,635,8,384,635,255);
+ shadow.addColorStop(0,'#15304b77');shadow.addColorStop(1,'#15304b00');
+ ctx.fillStyle=shadow;ctx.beginPath();ctx.ellipse(384,635,250,70,0,0,Math.PI*2);ctx.fill();
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.shadowColor='#ffffff80';ctx.shadowBlur=32;
+ ctx.font='490px "Apple Color Emoji","Noto Color Emoji",sans-serif';ctx.fillText(emoji,384,363);
+ ctx.shadowBlur=0;
  const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;
  const group=new THREE.Group();
- const back=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.55,.15,64),new THREE.MeshPhysicalMaterial({color:0x91bdd9,metalness:.42,roughness:.25,clearcoat:.8}));
- back.rotation.x=Math.PI/2;back.position.z=-.15;group.add(back);
- const face=new THREE.Mesh(new THREE.CircleGeometry(1.51,64),new THREE.MeshStandardMaterial({color:0xe4f0fa,roughness:.42,metalness:.08}));
- face.position.z=-.05;group.add(face);
- const picture=new THREE.Mesh(new THREE.PlaneGeometry(2.8,2.8),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));
- picture.position.z=.06;group.add(picture);
- group.userData.isQuizRelief=true;
+ const frame=new THREE.Mesh(new THREE.BoxGeometry(3.1,3.1,.18),new THREE.MeshPhysicalMaterial({color:0xb5cfe4,metalness:.5,roughness:.22,clearcoat:.8}));
+ frame.position.z=-.14;group.add(frame);
+ const image=new THREE.Mesh(new THREE.PlaneGeometry(3,3),new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide}));
+ image.position.z=.005;group.add(image);
+ const bevel=new THREE.Mesh(new THREE.TorusGeometry(2.11,.035,8,64),new THREE.MeshStandardMaterial({color:0xe4efff,metalness:.65,roughness:.22}));
+ bevel.scale.y=1;bevel.visible=false;group.add(bevel);
+ group.userData.isQuizRelief=true;group.userData.fitScale=1;
  return group;
 }
 function showDragonQuestionObject(word){
