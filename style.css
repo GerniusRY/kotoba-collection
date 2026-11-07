@@ -278,3 +278,23 @@ html,body{width:100%;height:100%;overflow:hidden}
 @media (prefers-reduced-motion:reduce){
  #stage:has(.dragon-role)::before{animation:none!important}
 }
+
+/* Twinkling particles follow the currently highlighted subject. */
+#stage:has(.dragon-role)::after{
+ content:"✦  ✧  ✦";position:absolute;z-index:3;pointer-events:none;
+ left:23%;top:42%;font-size:clamp(18px,4dvh,33px);letter-spacing:clamp(13px,3vw,42px);
+ color:#ffe7a3;text-shadow:0 0 12px #ffe3a0,0 0 28px #ffd778;
+ animation:dragon-sparkle 1.7s ease-in-out infinite alternate;
+}
+#stage.dragon-reward-mode::after{
+ content:"✦  ✧  ✦  ✧";left:48%;top:40%;transform:translateX(-50%);
+ color:#d5f4ff;text-shadow:0 0 16px #c4eeff,0 0 34px #83c9ff;
+ animation:dragon-sparkle-reward .75s ease-in-out infinite alternate;
+}
+@keyframes dragon-sparkle{from{opacity:.18;transform:translate(-48%,-12%) scale(.78)}to{opacity:.95;transform:translate(-48%,12%) scale(1.18)}}
+@keyframes dragon-sparkle-reward{from{opacity:.3;transform:translate(-50%,-16%) scale(.8)}to{opacity:1;transform:translate(-50%,12%) scale(1.28)}}
+@media(orientation:portrait){
+ #stage:has(.dragon-role)::after{left:27%;top:48%;letter-spacing:10px;font-size:19px}
+ #stage.dragon-reward-mode::after{left:50%;top:51%}
+}
+@media(prefers-reduced-motion:reduce){#stage:has(.dragon-role)::after{animation:none!important}}
