@@ -150,3 +150,31 @@ html,body{width:100%;height:100%;overflow:hidden}
 #stage:has(.dragon-caption) .dragon-caption{position:absolute;bottom:3%;left:50%;transform:translateX(-50%);white-space:nowrap;z-index:6}
 #stage:has(.dragon-caption) #scene{opacity:0!important;pointer-events:none}
 @media(orientation:landscape) and (max-height:400px){#dragonSideCanvas{height:70%;bottom:12%}#stage:has(.dragon-caption) #dragonSideCanvas{height:75%}}
+
+/* Dragon adventure: dragon/egg stays the central visual anchor at all times. */
+#stage:has(.dragon-quiz-question) #dragonSideCanvas,
+#stage:has(.dragon-caption) #dragonSideCanvas{
+ display:block!important;left:50%!important;right:auto!important;top:50%!important;bottom:auto!important;
+ transform:translate(-50%,-50%)!important;width:min(70vw,105dvh)!important;height:88%!important;z-index:3!important;
+}
+#stage:has(.dragon-quiz-question) #scene{
+ position:absolute!important;left:14%!important;top:63%!important;
+ width:min(32vw,43dvh)!important;height:min(32vw,43dvh)!important;z-index:5!important;
+ opacity:1!important;pointer-events:none!important;
+}
+#stage:has(.dragon-quiz-question) .game-layer,
+#stage:has(.dragon-caption) .game-layer{z-index:6!important;pointer-events:none}
+#stage:has(.dragon-quiz-question) .game-panel,
+#stage:has(.dragon-caption) .game-panel{pointer-events:none}
+#stage:has(.dragon-quiz-question) .dragon-quiz-question{position:absolute;top:3%;left:50%;transform:translateX(-50%);z-index:7}
+#stage:has(.dragon-quiz-question) .dragon-progress,
+#stage:has(.dragon-caption) .dragon-progress{position:absolute!important;top:4px!important;right:8px!important;left:auto!important;transform:none!important;width:min(28vw,220px)!important;font-size:clamp(10px,2.6dvh,14px)}
+#stage:has(.dragon-quiz-question) .dragon-help{left:2%;bottom:2%}
+#stage:has(.dragon-quiz-question) .dragon-parent-help{pointer-events:auto!important}
+#stage:has(.dragon-caption) .dragon-caption{bottom:5%!important;z-index:7!important}
+#stage:has(.dragon-caption) #scene{display:none!important}
+@media(orientation:landscape) and (max-height:420px){
+ #stage:has(.dragon-quiz-question) #dragonSideCanvas,
+ #stage:has(.dragon-caption) #dragonSideCanvas{height:92%!important;width:min(66vw,105dvh)!important}
+ #stage:has(.dragon-quiz-question) #scene{left:13%!important;top:61%!important;width:32dvh!important;height:32dvh!important}
+}
