@@ -218,7 +218,7 @@ function buildEgg3D(){
  g.userData.egg=true;return g;
 }
 const dragonSideScene=new THREE.Scene();
-const dragonSideCamera=new THREE.PerspectiveCamera(40,1,.1,100);dragonSideCamera.position.set(0,1.05,7.5);dragonSideCamera.lookAt(0,0,0);
+const dragonSideCamera=new THREE.PerspectiveCamera(40,1,.1,100);dragonSideCamera.position.set(0,.38,5.35);dragonSideCamera.lookAt(0,0,0);
 dragonSideScene.add(new THREE.HemisphereLight(0xf2f8ff,0x54728e,2.3));
 const sideLight=new THREE.DirectionalLight(0xffffff,2.5);sideLight.position.set(-3,5,5);dragonSideScene.add(sideLight);
 let dragonSideRenderer=null,dragonSideCanvas=null,lastDragonResize=0;
@@ -284,7 +284,7 @@ function dragonAnswer(w){
   dragonWrong++;
   if(dragonWrong===1){setPrompt('もういちど ゆっくり いってね');return}
   playTone(190,.19,'sawtooth');setTimeout(()=>playTone(145,.23,'sawtooth'),130);
-  dragonFeedback='ぶっぶー！ もういちど';showGame();setPrompt('もういちど いってみよう');return;
+  dragonFeedback='ぶっぶー！ もういちど';const fb=gamePanel.querySelector('.dragon-incorrect');if(fb)fb.textContent=dragonFeedback;else{const el=document.createElement('div');el.className='dragon-incorrect';el.textContent=dragonFeedback;gamePanel.append(el)}setPrompt('もういちど いってみよう');return;
  }
  dragonPhase='reward';petLevel=Math.min(100,petLevel+1);
  try{localStorage.setItem(PET_KEY,String(petLevel))}catch{}
