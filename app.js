@@ -308,7 +308,7 @@ function dragonAnswer(w){
  dragonFeedback='ピンポン！ '+dragonGrowthLabel(petLevel);
  showGame();setPrompt(dragonFeedback);
  if(dragonTimer)clearTimeout(dragonTimer);
- dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4800:petLevel===11?2100:1350);
+ dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4800:petLevel===11?2400:1500);
 }
 // Every question has a dedicated pictogram on a shaded, rotating 3D display.
 // Existing hand-built 3D meshes take priority; the rest use a textured 3D relief.
@@ -360,6 +360,7 @@ function renderDragon(){
  }
  const count=document.createElement('div');count.className='dragon-progress';
  const n=Math.min(100,petLevel);
+ count.setAttribute('role','progressbar');count.setAttribute('aria-valuenow',String(n));count.setAttribute('aria-valuemin','0');count.setAttribute('aria-valuemax','100');
  count.innerHTML='<span>'+n+' / 100 せいかい · '+dragonGrowthLabel(Math.max(1,n))+'</span><div class="dragon-progress-track"><div style="width:'+n+'%"></div></div>';
  gamePanel.append(count);
  if(question&&dragonFeedback){const fb=document.createElement('div');fb.className='dragon-incorrect';fb.textContent=dragonFeedback;gamePanel.append(fb)}
