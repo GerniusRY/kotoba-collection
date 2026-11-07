@@ -10,7 +10,32 @@ function mat(color,roughness=.4,metalness=0){return new THREE.MeshStandardMateri
 function make3D(type){const g=new THREE.Group();if(type==='apple'||type==='orange'){sphere(g,0,0,0,1.2,1.12,1.1,type==='apple'?0xc92320:0xf58b0d);cyl(g,0,1.13,0,.07,.09,.42,0x5b3b19);const leaf=sphere(g,.35,1.27,0,.4,.11,.2,0x398b35);leaf.rotation.z=.35}else if(type==='strawberry'){const b=new THREE.Mesh(new THREE.ConeGeometry(1.2,2.2,48),mat(0xe52e31,.65));b.rotation.z=Math.PI;g.add(b);for(let i=0;i<55;i++){let a=i*2.399,yy=-.85+(i%11)*.16,rr=.9*Math.max(.2,1-Math.abs(yy)/1.3);sphere(g,Math.cos(a)*rr,yy,Math.sin(a)*rr,.045,.06,.04,0xf7e5a2)}for(let i=0;i<6;i++){const l=sphere(g,Math.cos(i)*.45,1,Math.sin(i)*.45,.5,.08,.18,0x358a32);l.rotation.y=i}}else if(type==='sun'){sphere(g,0,0,0,1.05,1.05,1.05,0xffc928);for(let i=0;i<12;i++){const a=i*Math.PI/6;const ray=new THREE.Mesh(new THREE.ConeGeometry(.22,.7,12),mat(0xffdc47));ray.position.set(Math.cos(a)*1.5,Math.sin(a)*1.5,0);ray.rotation.z=a-Math.PI/2;g.add(ray)}}else if(type==='tree'){cyl(g,0,-.9,0,.19,.3,2,0x7c4d2d);sphere(g,0,.7,0,1.05,1.15,.95,0x267b38);sphere(g,-.55,.15,.25,.7,.7,.65,0x348e40);sphere(g,.6,.25,-.2,.65,.8,.7,0x2f873e)}else if(type==='car'){const body=new THREE.Mesh(new THREE.BoxGeometry(3, .7,1.5),mat(0xd52728,.28,.3));body.position.y=-.3;g.add(body);const roof=new THREE.Mesh(new THREE.BoxGeometry(1.65,.6,1.35),mat(0xe34d48,.27,.25));roof.position.set(-.15,.3,0);g.add(roof);for(const x of [-1,1])for(const z of [-.8,.8]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.2,32),mat(0x17191c,.95));wheel.rotation.x=Math.PI/2;wheel.position.set(x,-.72,z);g.add(wheel)}for(const z of [-.76,.76]){const glass=new THREE.Mesh(new THREE.BoxGeometry(1.2,.42,.03),mat(0x80bcd5,.12,.3));glass.position.set(-.15,.33,z);g.add(glass)}}else if(type==='parsley'){const stem=mat(0x4e9a3b,.55);const leaf=mat(0x278343,.7);for(let i=0;i<9;i++){const a=i*2.399;const radius=.35+(i%3)*.16;const x=Math.cos(a)*radius,z=Math.sin(a)*radius;const h=.85+(i%4)*.18;const stalk=new THREE.Mesh(new THREE.CylinderGeometry(.025,.045,h,10),stem);stalk.position.set(x*.35,-.65+h*.5,z*.35);stalk.rotation.z=-x*.28;g.add(stalk);for(let j=0;j<5;j++){const theta=a+j*1.256;const lx=x+Math.cos(theta)*.27,lz=z+Math.sin(theta)*.27;const m=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),leaf);m.position.set(lx,-.65+h+(j%2)*.11,lz);m.scale.set(.32,.15,.27);g.add(m)}}g.rotation.x=-.2}else if(type==='trumpet'){const gold=mat(0xe8b331,.2,.65);const dark=mat(0x8e6519,.25,.55);function tube(a,b,r=.085){const d=new THREE.Vector3().subVectors(new THREE.Vector3(...b),new THREE.Vector3(...a));const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),16),gold);m.position.copy(new THREE.Vector3(...a).add(new THREE.Vector3(...b)).multiplyScalar(.5));m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());g.add(m)}tube([-1.55,.2,0],[.85,.2,0],.12);tube([-1.4,-.4,0],[.4,-.4,0],.075);tube([-1.4,-.4,0],[-1.4,.2,0],.075);tube([.4,-.4,0],[.4,.2,0],.075);const bell=new THREE.Mesh(new THREE.CylinderGeometry(.58,.13,.95,48,1,true),gold);bell.rotation.z=-Math.PI/2;bell.position.set(1.28,.2,0);g.add(bell);const rim=new THREE.Mesh(new THREE.TorusGeometry(.58,.055,12,48),gold);rim.rotation.y=Math.PI/2;rim.position.set(1.76,.2,0);g.add(rim);for(const x of [-.65,-.25,.15]){tube([x,.2,0],[x,.85,0],.09);const cap=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.075,24),gold);cap.position.set(x,.89,0);g.add(cap)}const mouth=new THREE.Mesh(new THREE.CylinderGeometry(.15,.1,.3,20),dark);mouth.rotation.z=Math.PI/2;mouth.position.set(-1.7,.2,0);g.add(mouth);g.rotation.y=-.18}else return null;g.scale.setScalar(type==='car'?.95:1.1);return g}
 const meshType=w=>(WORDS[w]||[])[1];
 const imageCache=new Map();function show3D(word){if(currentObject){scene.remove(currentObject);currentObject.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){o.material.map?.dispose();o.material.dispose()}})}currentObject=make3D(meshType(word));if(currentObject){const bounds=new THREE.Box3().setFromObject(currentObject);const center=bounds.getCenter(new THREE.Vector3());const size=bounds.getSize(new THREE.Vector3());for(const child of currentObject.children)child.position.sub(center);currentObject.userData.fitScale=2.7/Math.max(size.x,size.y,size.z,0.01);currentObject.scale.setScalar(.15*currentObject.userData.fitScale);scene.add(currentObject);$('photo').classList.add('hidden');$('empty').classList.add('hidden');return true}return false}
-let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObject){const s=currentObject.scale.x;const target=currentObject.userData.fitScale||1;if(s<target)currentObject.scale.setScalar(Math.min(target,s+(t-lastTime)*.0028));currentObject.rotation.y+=currentObject.userData.isQuizRelief?Math.sin(t*.001)*.0006:Math.min(.02,(t-lastTime)*.0003);currentObject.position.y=Math.sin(t*.002)*.09}if(dragonModel&&playMode==='pet'){const p=Math.min(100,petLevel);dragonModel.rotation.y=-.14+Math.sin(t*.0006)*(.15+p*.0015);dragonModel.rotation.x=Math.sin(t*.0011)*.045;dragonModel.position.y=-.1+(p>=51?.18:0)+Math.sin(t*(p>=61?.004:.0017))*(p>=51?.03+p*.002:.08);dragonModel.rotation.z=p>=80?Math.sin(t*.0019)*.09:0;dragonModel.children.forEach(c=>{if(c.userData?.wing)c.rotation.z=c.userData.side*Math.sin(t*(p>=41?.009:.003))*(p>=41?.05+p*.003:.008);if(c.userData?.fire)c.scale.setScalar(.88+Math.sin(t*.018)*.14)})}if(dragonSideRenderer&&playMode==='pet'){updateDragonSideSize();dragonSideRenderer.render(dragonSideScene,dragonSideCamera)}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
+let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObject){const s=currentObject.scale.x;const target=currentObject.userData.fitScale||1;if(s<target)currentObject.scale.setScalar(Math.min(target,s+(t-lastTime)*.0028));currentObject.rotation.y+=currentObject.userData.isQuizRelief?Math.sin(t*.001)*.0006:Math.min(.02,(t-lastTime)*.0003);currentObject.position.y=Math.sin(t*.002)*.09}if(dragonModel&&playMode==='pet'){
+ const p=Math.min(100,petLevel),sec=t*.001,phase=sec*(1.15+p*.009),v=(p*37)%17;
+ const pulse=Math.sin(phase*2.2),breath=Math.sin(phase*1.7),isEgg=dragonModel.userData.egg;
+ const reward=dragonPhase==='reward',energy=reward?1.65:1;
+ // A deterministic animation signature for each of the 100 levels.
+ const sway=.07+(p%10)*.009,tempo=1+(p%7)*.065,tilt=.018+(p%5)*.008;
+ dragonModel.rotation.y=Math.sin(phase*.58*tempo)*sway+Math.sin(sec*.3+v)*.06;
+ dragonModel.rotation.x=Math.sin(phase*.8)*tilt;
+ dragonModel.rotation.z=Math.sin(phase*.45)*(.016+(p%4)*.006);
+ dragonModel.position.y=-.12+Math.sin(phase*1.2)*(.055+(p%5)*.009)+(p>=56?.17:0);
+ if(isEgg){
+  dragonModel.scale.set(1+breath*.025*energy,1+pulse*.033*energy,1+breath*.025*energy);
+  dragonModel.rotation.z+=Math.sin(phase*3)*(.015+p*.002);
+ }else{
+  const s=1+breath*.014*energy;dragonModel.scale.setScalar(s);
+  dragonModel.children.forEach(c=>{
+   if(c.userData?.wing){const flap=p>=41?(.14+(p-40)*.005):.015;c.rotation.z=c.userData.side*Math.sin(phase*(p>=56?5.3:3.4)*tempo)*flap*energy;c.rotation.y=c.userData.side*(.13+Math.cos(phase*2)*.09)}
+   if(c.userData?.fire){c.scale.setScalar(.7+Math.max(0,Math.sin(phase*5))*1.05);c.visible=p>=76}
+   if(c.userData?.tail){c.rotation.y=Math.sin(phase*1.7)*(.1+p*.0015)}
+   if(c.userData?.head){c.rotation.z=Math.sin(phase*.7)*.025}
+  });
+  if(p>=56){dragonModel.rotation.z+=Math.sin(phase*1.4)*.045}
+  if(p>=86){dragonModel.rotation.y+=Math.sin(phase*1.1)*.12}
+ }
+}
+if(dragonSideRenderer&&playMode==='pet'){if(t-lastDragonResize>400){updateDragonSideSize();lastDragonResize=t}dragonSideRenderer.render(dragonSideScene,dragonSideCamera)}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
 function normalize(w){w=w.trim().replace(/[。、！？!?\s]+$/g,'').replace(/^(これは|それは|あれは)/,'').replace(/(です|だよ|だね)$/,'').trim();return ALIASES[w]||w.toLowerCase()}
 function kana(w){return w.normalize('NFKC').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96)).replace(/[^ぁ-ゖー]/g,'')}
 // しりとりは清音・濁音・半濁音を厳密に区別する（例: ご≠こ、ぱ≠は）。
@@ -99,11 +124,11 @@ const gameLayer=$('gameLayer'),gamePanel=$('gamePanel'),petStatus=$('petStatus')
 function playTone(f,d=.22,shape='sine'){if(!sounds)return;try{audioContext??=new(window.AudioContext||window.webkitAudioContext)();const o=audioContext.createOscillator(),g=audioContext.createGain(),t=audioContext.currentTime;o.type=shape;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(Math.max(80,f*.72),t+d);g.gain.setValueAtTime(.065,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(audioContext.destination);o.start(t);o.stop(t+d+.01)}catch{}}
 function animalVoice(w){const pair=animalSounds[w];if(!pair)return;playTone(pair[0],.18,'triangle');setTimeout(()=>playTone(pair[1],.25,'triangle'),190)}
 function localGlyph(w){return WORDS[w]?.[0]||'❔'}
-const PET_KEY='kotoba-dragon-progress-v1';
+const PET_KEY='kotoba-dragon-100quiz-v2';
 try{petLevel=Math.max(0,Math.min(999,Number(localStorage.getItem(PET_KEY))||0))}catch{}
-function dragonStage(){return petLevel>=100?'adult':petLevel>=35?'young':petLevel>=6?'baby':'egg'}
+function dragonStage(){return petLevel>=100?'adult':petLevel>=45?'young':petLevel>=11?'baby':'egg'}
 function dragonArt(){
- const stage=dragonStage(),cracks=Math.min(5,petLevel);
+ const stage=dragonStage(),cracks=Math.min(5,Math.floor(petLevel/2));
  if(stage==='egg'){
   const paths=['M153 48l-15 32 20 17-18 28','M91 131l29 13-15 26 22 15','M229 126l-28 18 14 24-25 18','M130 227l24-26 22 21 20-16','M160 66l20 20-14 25 20 25'];
   return '<svg class="dragon-svg" viewBox="0 0 320 300" aria-label="魔法の卵"><defs><radialGradient id="eggLight" cx="32%" cy="25%" r="80%"><stop stop-color="#fffaf0"/><stop offset=".48" stop-color="#e7f4ff"/><stop offset="1" stop-color="#8eaed5"/></radialGradient></defs><ellipse cx="160" cy="280" rx="106" ry="12" fill="#071527" opacity=".5"/><ellipse cx="160" cy="153" rx="89" ry="126" fill="url(#eggLight)" stroke="#fff4d6" stroke-width="3"/><ellipse cx="125" cy="100" rx="18" ry="48" fill="#fff" opacity=".26" transform="rotate(24 125 100)"/>'+paths.slice(0,cracks).map(p=>'<path d="'+p+'" stroke="#294c70" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>').join('')+'</svg>';
@@ -118,7 +143,7 @@ function buildDragon3D(stage){
  const add=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);g.add(o);return o};
  const ball=(x,y,z,a,b,c,m)=>{const o=add(new THREE.SphereGeometry(1,24,16),m,x,y,z);o.scale.set(a,b,c);return o};
  const cone=(x,y,z,r,h,m,rz=0,rx=0)=>{const o=add(new THREE.ConeGeometry(r,h,10),m,x,y,z);o.rotation.z=rz;o.rotation.x=rx;return o};
- const stageScale=.78+Math.min(100,petLevel)*.0062;
+ const stageScale=.72+Math.max(0,petLevel-10)*.0072;
  // Baby: larger head and eyes; adult: longer body, horns, wings and tail.
  const headSize=adult?.89:young?.91:1.06,bodySize=adult?1.22:young?1.1:.93;
  ball(0,-.38,-.06,.61*bodySize,.72*bodySize,.54*bodySize,skin);
@@ -135,16 +160,16 @@ function buildDragon3D(stage){
   ball(side*.45,.65,.854,.021,.028,.014,white);
   ball(side*.19,.3,1.33,.035,.026,.021,nostril);
   ball(side*.34,.25,1.04,.17,.085,.045,mat(0xf5d8dc,.9));
-  if(petLevel>=21)cone(side*.43,1.21,-.1,.1+Math.min(1,(petLevel-20)/70)*.09,.15+Math.min(1,(petLevel-20)/70)*.57,horn,-side*(adult?.43:.3),-.16);
-  if(petLevel>=23)cone(side*.58,.99,-.3,.08,Math.min(.38,(petLevel-22)*.012),ridge,-side*.65);
+  if(petLevel>=26)cone(side*.43,1.21,-.1,.1+Math.min(1,(petLevel-20)/70)*.09,.15+Math.min(1,(petLevel-20)/70)*.57,horn,-side*(adult?.43:.3),-.16);
+  if(petLevel>=28)cone(side*.58,.99,-.3,.08,Math.min(.38,(petLevel-22)*.012),ridge,-side*.65);
   // Four sturdy paws with ivory claws.
   ball(side*.53,-.9,.31,.3,.22,.36,skin);
-  if(petLevel>=11)for(let toe=-1;toe<=1;toe++)cone(side*.53+toe*.145,-1.045,.61,.035+Math.min(.03,(petLevel-10)*.0006),.06+Math.min(.2,(petLevel-10)*.003),claw,Math.PI/2);
+  if(petLevel>=16)for(let toe=-1;toe<=1;toe++)cone(side*.53+toe*.145,-1.045,.61,.035+Math.min(.03,(petLevel-10)*.0006),.06+Math.min(.2,(petLevel-10)*.003),claw,Math.PI/2);
   ball(side*.65,-.23,.16,.235,.43,.23,skin).rotation.z=side*.27;
   ball(side*.72,-.53,.35,.19,.16,.23,skin);
   // Curved iridescent lavender wing with pale leading-edge spar.
-  const wing=new THREE.Group();wing.position.set(side*.49,.23,-.19);wing.userData.wing=true;wing.userData.side=side;wing.visible=petLevel>=31;g.add(wing);
-  const reach=.24+Math.max(0,Math.min(70,petLevel-30))*.019;
+  const wing=new THREE.Group();wing.position.set(side*.49,.23,-.19);wing.userData.wing=true;wing.userData.side=side;wing.visible=petLevel>=36;g.add(wing);
+  const reach=.24+Math.max(0,Math.min(65,petLevel-35))*.019;
   const sh=new THREE.Shape();sh.moveTo(0,0);
   sh.quadraticCurveTo(side*reach*.4,reach*.68,side*reach,reach*.7);
   sh.quadraticCurveTo(side*reach*1.13,reach*.24,side*reach*.97,-reach*.27);
@@ -157,14 +182,14 @@ function buildDragon3D(stage){
   wing.rotation.y=side*.14;
  }
  // Small pearl scales and gradually larger dorsal fins.
- if(petLevel>=23)for(let i=0;i<Math.min(9,1+Math.floor((petLevel-23)/4));i++)cone(0,.98-i*.23,-.55,.11+i*.003,.2+i*.01,ridge,.08);
+ if(petLevel>=28)for(let i=0;i<Math.min(9,1+Math.floor((petLevel-28)/4));i++)cone(0,.98-i*.23,-.55,.11+i*.003,.2+i*.01,ridge,.08);
  // Thick tapering tail.
- for(let i=0;i<Math.min(6,1+Math.floor(Math.max(0,petLevel-15)/3));i++){const t=i/6;ball(0,-.72-i*.12,-.46-i*.22,.29*(1-t)+.045,.25*(1-t)+.045,.29*(1-t)+.045,skin)}
- if(petLevel>=25)cone(0,-1.34,-1.71,.17,.37,ridge,0,-.75);
+ for(let i=0;i<Math.min(6,1+Math.floor(Math.max(0,petLevel-20)/3));i++){const t=i/6;ball(0,-.72-i*.12,-.46-i*.22,.29*(1-t)+.045,.25*(1-t)+.045,.29*(1-t)+.045,skin)}
+ if(petLevel>=30)cone(0,-1.34,-1.71,.17,.37,ridge,0,-.75);
  if(adult){cone(0,1.37,.15,.12,.34,horn);cone(-.2,.98,-.46,.1,.3,ridge);cone(.2,.98,-.46,.1,.3,ridge)}
- if(petLevel>=71){
+ if(petLevel>=76){
   const fire=new THREE.Group();fire.userData.fire=true;fire.position.set(0,.2,1.33);g.add(fire);
-  const flame=new THREE.Mesh(new THREE.ConeGeometry(.08+petLevel*.002,.12+Math.max(0,petLevel-70)*.022,12),new THREE.MeshBasicMaterial({color:0xffa42a,transparent:true,opacity:.85}));
+  const flame=new THREE.Mesh(new THREE.ConeGeometry(.08+petLevel*.002,.12+Math.max(0,petLevel-75)*.022,12),new THREE.MeshBasicMaterial({color:0xffa42a,transparent:true,opacity:.85}));
   flame.rotation.x=Math.PI/2;flame.position.z=.3;fire.add(flame);
   const core=new THREE.Mesh(new THREE.ConeGeometry(.045,.08+Math.max(0,petLevel-70)*.012,12),new THREE.MeshBasicMaterial({color:0xffe789,transparent:true,opacity:.9}));
   core.rotation.x=Math.PI/2;core.position.z=.28;fire.add(core);
@@ -180,7 +205,7 @@ function buildEgg3D(){
  shell.scale.set(.83,1.13,.78);g.add(shell);
  const bottom=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),new THREE.MeshStandardMaterial({color:0xa6c7e8,roughness:.38,transparent:true,opacity:.27}));
  bottom.scale.set(.85,1.15,.8);bottom.position.set(0,-.02,-.035);g.add(bottom);
- const cracks=Math.min(5,petLevel);
+ const cracks=Math.min(5,Math.floor(petLevel/2));
  for(let j=0;j<cracks;j++){
   const line=new THREE.Group(),angle=j*Math.PI*2/5;
   for(let i=0;i<5;i++){
@@ -196,7 +221,7 @@ const dragonSideScene=new THREE.Scene();
 const dragonSideCamera=new THREE.PerspectiveCamera(40,1,.1,100);dragonSideCamera.position.set(0,1.05,7.5);dragonSideCamera.lookAt(0,0,0);
 dragonSideScene.add(new THREE.HemisphereLight(0xf2f8ff,0x54728e,2.3));
 const sideLight=new THREE.DirectionalLight(0xffffff,2.5);sideLight.position.set(-3,5,5);dragonSideScene.add(sideLight);
-let dragonSideRenderer=null,dragonSideCanvas=null;
+let dragonSideRenderer=null,dragonSideCanvas=null,lastDragonResize=0;
 function setupDragonSide(){
  if(dragonSideRenderer)return;
  dragonSideCanvas=document.createElement('canvas');dragonSideCanvas.id='dragonSideCanvas';
@@ -241,6 +266,8 @@ let dragonQuestion='',dragonPhase='question',dragonTimer=null,dragonLast='',drag
 function dragonGrowthLabel(n){
  const milestones=['たまごに ひび','あかちゃん たんじょう','おめめ ぱっちり','あしと つめ','ながい しっぽ','つのが のびる','キラキラ うろこ','ちいさな つばさ','つばさが ひろがる','ぱたぱた はばたく','おおきく ジャンプ','ふわっと うかぶ','はじめて とんだ','そらで くるり','たかく とべた','はやく とべる','ひかる はなさき','ちいさな ひばな','ちいさな ほのお','つよい ほのお','おおきな つの','りっぱな つめ','ながい つばさ','キラキラの からだ','おおぞらを とぶ'];
  if(n>=100)return 'でんせつの しろがねドラゴン！';
+ if(n<=10)return n===10?'たまごが ひかる！':'たまごの なかで いのちが そだつ！';
+ if(n===11)return 'ドラゴンが うまれた！';
  return milestones[Math.min(24,Math.floor((Math.max(1,n)-1)/4))]+'！';
 }
 function nextDragonQuestion(){
@@ -266,7 +293,7 @@ function dragonAnswer(w){
  dragonFeedback='ピンポン！ '+dragonGrowthLabel(petLevel);
  showGame();setPrompt(dragonFeedback);
  if(dragonTimer)clearTimeout(dragonTimer);
- dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4200:2700);
+ dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4800:petLevel===11?2400:1250);
 }
 // Every question has a dedicated pictogram on a shaded, rotating 3D display.
 // Existing hand-built 3D meshes take priority; the rest use a textured 3D relief.
