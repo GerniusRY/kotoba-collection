@@ -216,3 +216,65 @@ html,body{width:100%;height:100%;overflow:hidden}
  #stage:has(.dragon-quiz-question) .dragon-help{position:absolute!important;bottom:5%!important;left:2%!important;right:auto!important}
  #stage:has(.dragon-quiz-question) .dragon-parent-help{position:absolute!important;bottom:5%!important;right:2%!important}
 }
+
+/* v2.5: phase-specific hierarchy. Left = question; right = growing companion. */
+#stage:has(.dragon-role){isolation:isolate}
+#stage:has(.dragon-role) .dragon-role{
+ position:absolute!important;z-index:7!important;pointer-events:none!important;
+ padding:5px 15px;border-radius:999px;white-space:nowrap;
+ font-size:clamp(12px,2.6dvh,17px);font-weight:900;letter-spacing:.05em;
+ text-shadow:0 1px 6px #061424;
+}
+#stage:has(.dragon-role) .dragon-role-question{
+ top:16%!important;left:24%!important;right:auto!important;transform:translateX(-50%)!important;
+ color:#fff4cc;background:#6d4c17df;border:1px solid #ffdc80a8;
+ box-shadow:0 0 19px #f6ca5755;
+}
+#stage:has(.dragon-role) .dragon-role-pet{
+ top:16%!important;left:68%!important;right:auto!important;transform:translateX(-50%)!important;
+ color:#d9f6ff;background:#18446bcf;border:1px solid #80d5ff8a;
+ box-shadow:0 0 18px #73c8ff33;
+}
+#stage:has(.dragon-role) .dragon-quiz-question{
+ top:2%!important;left:49%!important;right:auto!important;
+ transform:translateX(-50%)!important;
+}
+#stage:has(.dragon-role) .dragon-progress{
+ top:3%!important;right:2%!important;left:auto!important;
+ transform:none!important;width:min(24vw,235px)!important;
+}
+#stage:has(.dragon-role):not(.dragon-reward-mode)::before{
+ content:"";position:absolute;z-index:1;pointer-events:none;
+ width:38%;height:72%;left:7%;top:18%;border-radius:50%;
+ background:radial-gradient(ellipse,#ffe9a628 0%,#f9d87610 44%,transparent 74%);
+ animation:dragon-question-aura 2.5s ease-in-out infinite alternate;
+}
+#stage.dragon-reward-mode::before{
+ content:"";position:absolute;z-index:1;pointer-events:none;
+ width:55%;height:92%;left:22%;top:5%;border-radius:50%;
+ background:radial-gradient(ellipse,#c4eaff80 0%,#7cb7ff38 35%,transparent 75%);
+ animation:dragon-reward-aura 1.1s ease-in-out infinite alternate;
+}
+#stage.dragon-reward-mode .dragon-role-question{opacity:.3}
+#stage.dragon-reward-mode .dragon-role-pet{
+ top:14%!important;left:50%!important;transform:translateX(-50%)!important;
+ box-shadow:0 0 25px #a6e7ffb0;
+}
+@keyframes dragon-question-aura{from{opacity:.55;transform:scale(.88)}to{opacity:1;transform:scale(1.12)}}
+@keyframes dragon-reward-aura{from{opacity:.4;transform:scale(.85)}to{opacity:1;transform:scale(1.18)}}
+@media (orientation:portrait){
+ #stage:has(.dragon-role) .dragon-role{font-size:clamp(11px,3vw,14px);padding:5px 10px}
+ #stage:has(.dragon-role) .dragon-role-question{top:22%!important;left:27%!important}
+ #stage:has(.dragon-role) .dragon-role-pet{top:22%!important;left:73%!important}
+ #stage:has(.dragon-role) .dragon-quiz-question{top:3%!important;left:50%!important}
+ #stage:has(.dragon-role) .dragon-progress{
+  top:12%!important;left:50%!important;right:auto!important;
+  transform:translateX(-50%)!important;width:83vw!important;
+ }
+ #stage:has(.dragon-role):not(.dragon-reward-mode)::before{left:0%;top:28%;width:55%;height:50%}
+ #stage.dragon-reward-mode::before{left:13%;top:24%;width:74%;height:54%}
+ #stage.dragon-reward-mode .dragon-role-pet{top:22%!important;left:50%!important}
+}
+@media (prefers-reduced-motion:reduce){
+ #stage:has(.dragon-role)::before{animation:none!important}
+}
