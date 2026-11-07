@@ -38,12 +38,14 @@ let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObje
  dragonModel.rotation.y=Math.sin(phase*.58*tempo)*sway+Math.sin(sec*.3+v)*.06;
  dragonModel.rotation.x=Math.sin(phase*.8)*tilt;
  dragonModel.rotation.z=Math.sin(phase*.45)*(.016+(p%4)*.006);
- dragonModel.position.y=-.12+Math.sin(phase*1.2)*(.055+(p%5)*.009)+(p>=56?.17:0);dragonModel.position.x=window.innerHeight>window.innerWidth?.55:.8;
+ const portrait=window.innerHeight>window.innerWidth;
+ const elapsed=Math.max(0,t-dragonRewardStarted),boost=reward?1+.43*Math.sin(Math.min(1,elapsed/1100)*Math.PI):1;
+ dragonModel.position.y=-.12+Math.sin(phase*1.2)*(.055+(p%5)*.009)+(p>=56?.17:0);dragonModel.position.x=reward?0:(portrait?1.02:1.75);
  if(isEgg){
-  dragonModel.scale.set(1+breath*.025*energy,1+pulse*.033*energy,1+breath*.025*energy);
+  dragonModel.scale.set((1+breath*.025*energy)*boost,(1+pulse*.033*energy)*boost,(1+breath*.025*energy)*boost);
   dragonModel.rotation.z+=Math.sin(phase*3)*(.015+p*.002);
  }else{
-  const s=1+breath*.014*energy;dragonModel.scale.setScalar(s);
+  const s=(1+breath*.014*energy)*boost;dragonModel.scale.setScalar(s);
   const blink=Math.pow(Math.max(0,Math.sin(sec*1.1+p*.2)),22);
   dragonModel.children.forEach(c=>{
    if(c.userData?.wing){const flap=p>=41?(.14+(p-40)*.005):.015;c.rotation.z=c.userData.side*Math.sin(phase*(p>=56?5.3:3.4)*tempo)*flap*energy;c.rotation.y=c.userData.side*(.13+Math.cos(phase*2)*.09)}
@@ -57,7 +59,7 @@ let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObje
   if(p>=86){dragonModel.rotation.y+=Math.sin(phase*1.1)*.12}
  }
 }
-if(playMode==='pet'&&currentObject){const quiz=dragonPhase==='question';currentObject.visible=quiz;currentObject.position.x=quiz?(window.innerHeight>window.innerWidth?-1.25:-2.55):0;currentObject.position.y=Math.sin(t*.0016)*.05;currentObject.rotation.y=Math.sin(t*.0007)*.13;const target=(currentObject.userData.fitScale||1)*(quiz?(window.innerHeight>window.innerWidth?.53:.64):1);const current=currentObject.scale.x;currentObject.scale.setScalar(current+(target-current)*Math.min(1,Math.max(0,(t-lastTime)*.012)))}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
+if(playMode==='pet'&&currentObject){const quiz=dragonPhase==='question';currentObject.visible=quiz;currentObject.position.x=quiz?(window.innerHeight>window.innerWidth?-1.05:-1.8):0;currentObject.position.y=Math.sin(t*.0016)*.05;currentObject.rotation.y=Math.sin(t*.0007)*.13;const target=(currentObject.userData.fitScale||1)*(quiz?(window.innerHeight>window.innerWidth?.78:1.05):1);const current=currentObject.scale.x;currentObject.scale.setScalar(current+(target-current)*Math.min(1,Math.max(0,(t-lastTime)*.012)))}renderer.render(scene,camera);lastTime=t}requestAnimationFrame(animate);
 function normalize(w){w=w.trim().replace(/[。、！？!?\s]+$/g,'').replace(/^(これは|それは|あれは)/,'').replace(/(です|だよ|だね)$/,'').trim();return ALIASES[w]||w.toLowerCase()}
 function kana(w){return w.normalize('NFKC').replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-96)).replace(/[^ぁ-ゖー]/g,'')}
 // しりとりは清音・濁音・半濁音を厳密に区別する（例: ご≠こ、ぱ≠は）。
@@ -294,7 +296,7 @@ function dragonSpeechMatch(v){
  if(a.length>=3&&e.length>=3&&Math.abs(a.length-e.length)<=1){let misses=Math.abs(a.length-e.length);for(let i=0;i<Math.min(a.length,e.length);i++)if(a[i]!==e[i])misses++;if(misses<=1)return true}
  return false;
 }
-let dragonQuestion='',dragonPhase='question',dragonTimer=null,dragonLast='',dragonFeedback='',dragonWrong=0,dragonQuestionStarted=0;
+let dragonQuestion='',dragonPhase='question',dragonTimer=null,dragonLast='',dragonFeedback='',dragonWrong=0,dragonQuestionStarted=0,dragonRewardStarted=0;
 function dragonGrowthLabel(n){
  const milestones=['たまごに ひび','あかちゃん たんじょう','おめめ ぱっちり','あしと つめ','ながい しっぽ','つのが のびる','キラキラ うろこ','ちいさな つばさ','つばさが ひろがる','ぱたぱた はばたく','おおきく ジャンプ','ふわっと うかぶ','はじめて とんだ','そらで くるり','たかく とべた','はやく とべる','ひかる はなさき','ちいさな ひばな','ちいさな ほのお','つよい ほのお','おおきな つの','りっぱな つめ','ながい つばさ','キラキラの からだ','おおぞらを とぶ'];
  if(n>=100)return 'でんせつの しろがねドラゴン！';
@@ -320,7 +322,7 @@ function dragonAnswer(w){
   playTone(190,.19,'sawtooth');setTimeout(()=>playTone(145,.23,'sawtooth'),130);
   dragonFeedback='ぶっぶー！ もういちど';const fb=gamePanel.querySelector('.dragon-incorrect');if(fb)fb.textContent=dragonFeedback;else{const el=document.createElement('div');el.className='dragon-incorrect';el.textContent=dragonFeedback;gamePanel.append(el)}setPrompt('もういちど いってみよう');return;
  }
- dragonPhase='reward';petLevel=Math.min(100,petLevel+1);
+ dragonPhase='reward';dragonRewardStarted=performance.now();petLevel=Math.min(100,petLevel+1);
  try{localStorage.setItem(PET_KEY,String(petLevel))}catch{}
  petStatus.textContent='🐲 '+petLevel+'/100';
  playTone(784,.13);setTimeout(()=>playTone(1047,.26),135);
@@ -377,6 +379,8 @@ function renderDragon(){
   updateDragon3D();
   const title=document.createElement('div');title.className='dragon-caption';title.textContent=dragonFeedback;gamePanel.append(title);
  }
+ const questionLabel=document.createElement('div');questionLabel.className='dragon-role dragon-role-question';questionLabel.textContent='？ もんだい';gamePanel.append(questionLabel);
+ const petLabel=document.createElement('div');petLabel.className='dragon-role dragon-role-pet';petLabel.textContent=dragonStage()==='egg'?'✦ そだてる たまご':'✦ そだてる ドラゴン';gamePanel.append(petLabel);
  const count=document.createElement('div');count.className='dragon-progress';
  const n=Math.min(100,petLevel);
  count.setAttribute('role','progressbar');count.setAttribute('aria-valuenow',String(n));count.setAttribute('aria-valuemin','0');count.setAttribute('aria-valuemax','100');
@@ -386,10 +390,10 @@ function renderDragon(){
  if(question){const hint=document.createElement('div');hint.className='dragon-help';hint.textContent='こえで こたえてね';gamePanel.append(hint);const assist=document.createElement('button');assist.type='button';assist.className='dragon-parent-help';assist.textContent='おとなの せいかいボタン';assist.onclick=()=>dragonAnswer(dragonQuestion);gamePanel.append(assist)}
 }
 function renderGamePanel(){gamePanel.replaceChildren();if(playMode==='quiz'){const h=document.createElement('div');h.className='quiz-title';h.textContent='どれが「'+quizAnswer+'」かな？';gamePanel.append(h);const options=document.createElement('div');options.className='quiz-options';quizChoices.forEach(w=>{const b=document.createElement('button');b.className='quiz-option';b.textContent=localGlyph(w);b.setAttribute('aria-label',w);b.onclick=()=>checkQuiz(w);options.append(b)});gamePanel.append(options)}else if(playMode==='pet'){renderDragon()}else if(playMode==='train'){const d=document.createElement('div');d.className='train-hero';d.textContent='🚂'+'🚃'.repeat(Math.min(trainCount,7));gamePanel.append(d);const p=document.createElement('div');p.textContent=trainCount>=5?'でんしゃが しゅっぱつ！':'ことばを いうと しゃりょうが ふえるよ';gamePanel.append(p)}else if(playMode==='chest'){const d=document.createElement('div');d.className='chest-hero';d.textContent=chestCount>=3?'🎁':'🧰';gamePanel.append(d);const p=document.createElement('div');p.textContent=chestCount>=3?'たからばこが あいた！':'あと '+(3-chestCount)+'こで たからばこが あくよ';gamePanel.append(p)}}
-function showGame(){gameLayer.classList.toggle('hidden',playMode==='words');$('nextQuiz').classList.toggle('hidden',playMode!=='quiz');renderGamePanel()}
+function showGame(){document.getElementById('stage')?.classList.toggle('dragon-reward-mode',playMode==='pet'&&dragonPhase==='reward');gameLayer.classList.toggle('hidden',playMode==='words');$('nextQuiz').classList.toggle('hidden',playMode!=='quiz');renderGamePanel()}
 function newQuiz(){const pool=Object.keys(WORDS).filter(w=>WORDS[w]?.[0]&&w.length<=7&&kana(w)===w&&WORDS[w][0]!=='✦');const seed=['りんご','ぞう','ねこ','いぬ','くるま','ばなな','ぱんだ','らっぱ','ぱせり','うさぎ','すいか','ひこうき'].filter(w=>pool.includes(w));const candidates=seed.length>=3?seed:pool;quizAnswer=candidates[Math.floor(Math.random()*candidates.length)];quizChoices=[quizAnswer];while(quizChoices.length<3&&candidates.length>=3){const w=candidates[Math.floor(Math.random()*candidates.length)];if(!quizChoices.includes(w)&&localGlyph(w)!==localGlyph(quizAnswer)&&!quizChoices.some(x=>localGlyph(x)===localGlyph(w)))quizChoices.push(w)}quizChoices.sort(()=>Math.random()-.5);quizLocked=false;showGame();setPrompt('「'+quizAnswer+'」は どれかな？ こえで こたえてね')}
 function checkQuiz(w){if(quizLocked)return;if(normalize(w)===quizAnswer){quizLocked=true;playTone(880,.35);setPrompt('せいかい！ '+quizAnswer+'！');gamePanel.classList.add('celebrate');setTimeout(()=>{gamePanel.classList.remove('celebrate');if(playMode==='quiz')newQuiz()},1250)}else{playTone(240,.12);setPrompt('もういちど！ 「'+quizAnswer+'」は どれかな？')}}
-function selectPlayMode(v){if(dragonTimer){clearTimeout(dragonTimer);dragonTimer=null}if(currentObject)currentObject.visible=v!=='pet';if(v!=='pet')disposeDragonModel();playMode=v;const sel=$('playMode');if(sel)sel.value=v;gameLayer.classList.toggle('hidden',v==='words');if(v==='quiz')newQuiz();else if(v==='pet'){nextDragonQuestion()}else{showGame();setPrompt(v==='words'?'ことばを いってね':'ことばを いって あそぼう')}}
+function selectPlayMode(v){if(dragonTimer){clearTimeout(dragonTimer);dragonTimer=null}if(currentObject)currentObject.visible=v!=='pet';if(v!=='pet')disposeDragonModel();playMode=v;$('stage').classList.toggle('dragon-reward-mode',v==='pet'&&dragonPhase==='reward');const sel=$('playMode');if(sel)sel.value=v;gameLayer.classList.toggle('hidden',v==='words');if(v==='quiz')newQuiz();else if(v==='pet'){nextDragonQuestion()}else{showGame();setPrompt(v==='words'?'ことばを いってね':'ことばを いって あそぼう')}}
 function rewardWord(w){if(playMode==='quiz'){checkQuiz(w);return true}if(playMode==='pet'){dragonAnswer(w)}else if(playMode==='train'){trainCount++;trainStatus.textContent='🚂 '+trainCount;showGame();if(trainCount%5===0){gamePanel.classList.add('train-go');setTimeout(()=>gamePanel.classList.remove('train-go'),1500)}}else if(playMode==='chest'){chestCount++;if(chestCount>=3){showGame();playTone(990,.35);setTimeout(()=>{chestCount=0;if(playMode==='chest')showGame()},2000)}else showGame()}return false}
 function magicCommand(w){const c={'あか':0xf34343,'あお':0x3899fa,'きいろ':0xffdc37,'みどり':0x45c76a,'ぴんく':0xff8fd0,'むらさき':0xa774ec,'しろ':0xffffff};const cmd=w.replace(/(にしてね|にして|になれ|くして|くなれ)$/,'');if(c[cmd]){magicColor=c[cmd];if(currentObject)currentObject.traverse(o=>{if(o.isMesh&&o.material?.color)o.material.color.setHex(c[cmd])});$('stage').style.setProperty('--magic-tint','#'+c[cmd].toString(16).padStart(6,'0'));setPrompt(cmd+'に なったよ！');playTone(950);return true}if(['おおきくなあれ','おおきくなれ','おおきく','ちいさくなあれ','ちいさくなれ','ちいさく'].includes(w)){const big=w.startsWith('おお');if(currentObject)currentObject.scale.multiplyScalar(big?1.5:.65);const el=$('empty');el.style.transform='scale('+(big?1.45:.7)+')';setPrompt(big?'おおきく なった！':'ちいさく なった！');playTone(big?650:420);return true}if(['とんで','とべ','とんでいけ'].includes(w)){gamePanel.classList.add('train-go');$('empty').classList.add('fly');if(currentObject)currentObject.position.y+=.5;setTimeout(()=>{$('empty').classList.remove('fly');gamePanel.classList.remove('train-go')},1000);setPrompt('とんだ！');return true}return false}
 
