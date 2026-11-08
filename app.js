@@ -356,7 +356,7 @@ function dragonAnswer(w){
  dragonFeedback='ピンポン！ '+dragonGrowthLabel(petLevel);
  showGame();setPrompt(dragonFeedback);
  if(dragonTimer)clearTimeout(dragonTimer);
- dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?4800:petLevel===11?2400:1500);
+ dragonTimer=setTimeout(()=>{dragonTimer=null;if(playMode==='pet')nextDragonQuestion()},petLevel===100?5500:petLevel===11?3500:2300);
 }
 // Every question has a dedicated pictogram on a shaded, rotating 3D display.
 // Existing hand-built 3D meshes take priority; the rest use a textured 3D relief.
