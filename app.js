@@ -45,7 +45,7 @@ let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObje
   dragonModel.scale.set((1+breath*.025*energy)*boost,(1+pulse*.033*energy)*boost,(1+breath*.025*energy)*boost);
   dragonModel.rotation.z+=Math.sin(phase*3)*(.015+p*.002);
  }else{
-  const s=(1+breath*.014*energy)*boost;dragonModel.scale.setScalar(s);
+  const s=(dragonModel.userData.stageScale||1)*(1+breath*.014*energy)*boost;dragonModel.scale.setScalar(s);
   const blink=Math.pow(Math.max(0,Math.sin(sec*1.1+p*.2)),22);
   dragonModel.children.forEach(c=>{
    if(c.userData?.wing){const flap=p>=41?(.14+(p-40)*.005):.015;c.rotation.z=c.userData.side*Math.sin(phase*(p>=56?5.3:3.4)*tempo)*flap*energy;c.rotation.y=c.userData.side*(.13+Math.cos(phase*2)*.09)}
@@ -229,10 +229,37 @@ function buildDragon3D(stage){
   core.rotation.x=Math.PI/2;core.position.z=.28;fire.add(core);
  }
 
- g.scale.setScalar(stageScale);g.rotation.y=-.12;
+ addGrowthDetails(g,petLevel,false);
+ g.userData.stageScale=stageScale;g.scale.setScalar(stageScale);g.rotation.y=-.12;
  return g;
 }
 let dragonModel=null;
+// A permanent physical addition at every answer: ten shell constellations,
+// then ninety distinct gemstone scales, including a highlighted newest scale.
+function addGrowthDetails(group,level,egg){
+ const pearl=new THREE.MeshPhysicalMaterial({color:0x80cdec,metalness:.4,roughness:.18,clearcoat:1,iridescence:1});
+ const gold=new THREE.MeshPhysicalMaterial({color:0xf7d894,metalness:.55,roughness:.2,clearcoat:1});
+ const orb=(x,y,z,r,material)=>{const m=new THREE.Mesh(new THREE.IcosahedronGeometry(r,1),material);m.position.set(x,y,z);group.add(m);return m};
+ if(egg){
+  for(let n=1;n<=Math.min(level,10);n++){
+   const a=(n-1)*2.399963,lat=.48+(n-1)*.21;
+   const x=.84*Math.sin(lat)*Math.cos(a),y=1.14*Math.cos(lat),z=.79*Math.sin(lat)*Math.sin(a);
+   const m=orb(x,y,z,.05+n*.002,n===level?gold:pearl);m.scale.set(1,.8,.7);
+  }
+  return;
+ }
+ const count=Math.max(0,Math.min(90,level-10));
+ for(let i=0;i<count;i++){
+  const row=Math.floor(i/10),col=i%10;
+  const angle=(col-4.5)*.2+(row%2)*.09;
+  const y=.16-row*.14;
+  const radius=.64*Math.sqrt(Math.max(.18,1-((y+.4)/1.4)**2));
+  const x=Math.sin(angle)*radius,z=.51+Math.cos(angle)*radius*.25;
+  const m=orb(x,y,z,.036+row*.002,i===count-1?gold:pearl);
+  m.scale.set(.9,1.35,.55);
+ }
+ group.userData.growthCount=count;
+}
 function buildEgg3D(){
  const g=new THREE.Group();
  const shell=new THREE.Mesh(new THREE.SphereGeometry(1,64,48),new THREE.MeshPhysicalMaterial({color:0xd9e9f7,roughness:.24,metalness:.19,clearcoat:1,clearcoatRoughness:.1,iridescence:.6,iridescenceIOR:1.3}));
@@ -250,7 +277,7 @@ function buildEgg3D(){
   }
   line.rotation.y=angle;g.add(line);
  }
- g.userData.egg=true;return g;
+ addGrowthDetails(g,petLevel,true);g.userData.egg=true;return g;
 }
 const dragonSideScene=new THREE.Scene();
 const dragonSideCamera=new THREE.PerspectiveCamera(40,1,.1,100);dragonSideCamera.position.set(0,.38,5.35);dragonSideCamera.lookAt(0,0,0);
@@ -381,6 +408,7 @@ function renderDragon(){
  }
  const questionLabel=document.createElement('div');questionLabel.className='dragon-role dragon-role-question';questionLabel.textContent='？ もんだい';gamePanel.append(questionLabel);
  const petLabel=document.createElement('div');petLabel.className='dragon-role dragon-role-pet';petLabel.textContent=dragonStage()==='egg'?'✦ そだてる たまご':'✦ そだてる ドラゴン';gamePanel.append(petLabel);
+ if(!question){const delta=document.createElement('div');delta.className='dragon-growth-delta';delta.textContent='せいちょう！ '+Math.max(0,petLevel-1)+' → '+petLevel+'　✦ あたらしい かがやき';gamePanel.append(delta)}
  const count=document.createElement('div');count.className='dragon-progress';
  const n=Math.min(100,petLevel);
  count.setAttribute('role','progressbar');count.setAttribute('aria-valuenow',String(n));count.setAttribute('aria-valuemin','0');count.setAttribute('aria-valuemax','100');
