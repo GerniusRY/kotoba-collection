@@ -298,3 +298,23 @@ html,body{width:100%;height:100%;overflow:hidden}
  #stage.dragon-reward-mode::after{left:50%;top:51%}
 }
 @media(prefers-reduced-motion:reduce){#stage:has(.dragon-role)::after{animation:none!important}}
+
+/* v2.6 — readable before/after evolution milestone on every single answer */
+.dragon-growth-delta{
+ position:absolute!important;left:50%!important;top:20%!important;
+ transform:translateX(-50%)!important;z-index:10!important;
+ white-space:nowrap;max-width:92%;pointer-events:none;
+ padding:9px 18px;border:1px solid #ffdb90;border-radius:16px;
+ color:#fff7df;background:linear-gradient(120deg,#735021ed,#2e6686ed,#735021ed);
+ box-shadow:0 0 24px #ffd68a8a,0 6px 25px #0009;
+ font-size:clamp(14px,3.5dvh,23px);font-weight:900;
+ animation:dragon-evolution-enter .55s cubic-bezier(.16,1.4,.3,1) both;
+}
+@keyframes dragon-evolution-enter{
+ from{opacity:0;transform:translate(-50%,18px) scale(.7);filter:brightness(2)}
+ to{opacity:1;transform:translate(-50%,0) scale(1);filter:brightness(1)}
+}
+@media(orientation:portrait){
+ .dragon-growth-delta{top:32%!important;font-size:clamp(12px,3.5vw,17px);padding:8px 11px}
+}
+@media(prefers-reduced-motion:reduce){.dragon-growth-delta{animation:none}}
