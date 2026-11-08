@@ -47,13 +47,13 @@ let lastTime=0;function animate(t){requestAnimationFrame(animate);if(currentObje
  }else{
   const s=(dragonModel.userData.stageScale||1)*(1+breath*.014*energy)*boost;dragonModel.scale.setScalar(s);
   const blink=Math.pow(Math.max(0,Math.sin(sec*1.1+p*.2)),22);
-  dragonModel.children.forEach(c=>{
+  dragonModel.traverse(c=>{
    if(c.userData?.wing){const flap=p>=41?(.14+(p-40)*.005):.015;c.rotation.z=c.userData.side*Math.sin(phase*(p>=56?5.3:3.4)*tempo)*flap*energy;c.rotation.y=c.userData.side*(.13+Math.cos(phase*2)*.09)}
    if(c.userData?.fire){c.scale.setScalar(.7+Math.max(0,Math.sin(phase*5))*1.05);c.visible=p>=76}
    if(c.userData?.tail){c.rotation.y=Math.sin(phase*1.7)*(.1+p*.0015)}
    if(c.userData?.head){c.rotation.z=Math.sin(phase*.7)*.025}
-   if(c.userData?.eyelid){c.scale.y=.02+blink*.24;c.position.y=.91-blink*.13}
-   if(c.userData?.eye){c.scale.y=.14*(1-blink*.87)}
+   if(c.userData?.eyelid){c.scale.y=.025+blink*.19;c.position.y=.3-blink*.09}
+   if(c.userData?.eye){c.scale.y=.15*(1-blink*.87)}
   });
   if(p>=56){dragonModel.rotation.z+=Math.sin(phase*1.4)*.045}
   if(p>=86){dragonModel.rotation.y+=Math.sin(phase*1.1)*.12}
@@ -160,77 +160,97 @@ function dragonArt(){
  return '';
 }
 function buildDragon3D(stage){
- // A: pearlescent white / ice-blue dragon, identical character across all stages.
- const g=new THREE.Group(),adult=stage==='adult',young=stage==='young';
- const skin=new THREE.MeshPhysicalMaterial({color:0xe5f1ff,roughness:.29,metalness:.12,clearcoat:.65,clearcoatRoughness:.2}),face=new THREE.MeshPhysicalMaterial({color:0xf9fcff,roughness:.31,clearcoat:.7}),belly=mat(0xf5e9df,.66),horn=mat(0xe7d6bb,.35,.08),ridge=mat(0x9ecde9,.35,.18);
- const iris=mat(0x36a8ed,.18,.2),pupil=mat(0x102e5c,.1,.14),white=mat(0xffffff,.16,.04),nostril=mat(0x829cae,.9),mouth=mat(0x607e96,.9),claw=mat(0xfff3d8,.36);
- const add=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);g.add(o);return o};
- const ball=(x,y,z,a,b,c,m)=>{const o=add(new THREE.SphereGeometry(1,24,16),m,x,y,z);o.scale.set(a,b,c);return o};
- const cone=(x,y,z,r,h,m,rz=0,rx=0)=>{const o=add(new THREE.ConeGeometry(r,h,10),m,x,y,z);o.rotation.z=rz;o.rotation.x=rx;return o};
- const stageScale=.72+Math.max(0,petLevel-10)*.0072;
- // Baby: larger head and eyes; adult: longer body, horns, wings and tail.
- const headSize=adult?.89:young?.91:1.06,bodySize=adult?1.22:young?1.1:.93;
- ball(0,-.38,-.06,.61*bodySize,.72*bodySize,.54*bodySize,skin);
- ball(0,-.48,.45,.41*bodySize,.51*bodySize,.16,belly);
- ball(0,.64,.09,.73*headSize,.62*headSize,.64*headSize,face);
- ball(0,.38,.68,.48*headSize,.29*headSize,.52*headSize,face);
- ball(0,.27,1.03,.4*headSize,.2*headSize,.31*headSize,skin);
- // Gentle smile, tiny nose, sapphire eyes with distinct highlights.
+ // Art-directed continuous creature silhouette: organic pearlescent body,
+ // integrated long neck and muzzle, large glass eyes, curved horns and tail.
+ const g=new THREE.Group(),level=petLevel;
+ const adult=stage==='adult',young=stage==='young';
+ const skin=new THREE.MeshPhysicalMaterial({color:0xd9eaf5,metalness:.08,roughness:.34,clearcoat:.9,clearcoatRoughness:.17,iridescence:.36});
+ const highlight=new THREE.MeshPhysicalMaterial({color:0xf6faff,metalness:.04,roughness:.28,clearcoat:1});
+ const belly=new THREE.MeshPhysicalMaterial({color:0xe7d8e5,roughness:.57,clearcoat:.3});
+ const sapphire=new THREE.MeshPhysicalMaterial({color:0x1477c6,metalness:.3,roughness:.11,clearcoat:1,transmission:.08});
+ const pupil=new THREE.MeshPhysicalMaterial({color:0x071a36,roughness:.07,clearcoat:1});
+ const horn=new THREE.MeshPhysicalMaterial({color:0xf1e3cb,roughness:.32,clearcoat:.55});
+ const lavender=new THREE.MeshPhysicalMaterial({color:0x9998db,metalness:.13,roughness:.4,clearcoat:.5,side:THREE.DoubleSide,transparent:true,opacity:.95});
+ const ridge=new THREE.MeshPhysicalMaterial({color:0x9cc5e3,metalness:.16,roughness:.35,clearcoat:.7});
+ const mouth=new THREE.MeshStandardMaterial({color:0x57778f,roughness:.78});
+ const sphere=new THREE.SphereGeometry(1,40,28);
+ const ell=(parent,x,y,z,rx,ry,rz,material)=>{const o=new THREE.Mesh(sphere,material);o.position.set(x,y,z);o.scale.set(rx,ry,rz);parent.add(o);return o};
+ const tapered=(parent,start,end,r1,r2,material)=>{
+  const a=new THREE.Vector3(...start),b=new THREE.Vector3(...end),d=b.clone().sub(a);
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,d.length(),12,1),material);
+  m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());parent.add(m);return m;
+ };
+ const body=ell(g,0,-.43,-.11,.64,.8,.54,skin);
+ ell(g,0,-.5,.38,.42,.58,.18,belly);
+ // Organic neck flows into a wide, expressive head, not a detached snowman sphere.
+ ell(g,0,.16,-.08,.36,.61,.36,skin);
+ const head=new THREE.Group();head.position.set(0,.64,.06);head.userData.head=true;g.add(head);
+ ell(head,0,.06,0,.68,.53,.59,highlight);
+ ell(head,0,-.21,.46,.48,.31,.52,highlight);
+ ell(head,0,-.32,.71,.4,.16,.33,skin);
+ ell(head,0,-.43,.66,.33,.022,.18,mouth);
  for(const side of [-1,1]){
-  ball(side*.38,.7,.65,.235*headSize,.25*headSize,.13,white);
-  ball(side*.395,.7,.761,.167*headSize,.19*headSize,.077,iris);
-  const pupilMesh=ball(side*.41,.7,.817,.089*headSize,.14*headSize,.045,pupil);pupilMesh.userData.eye=true;
-  const eyelid=ball(side*.38,.91,.82,.24*headSize,.025,.07,face);eyelid.userData.eyelid=true;eyelid.userData.eyeSide=side;
-  ball(side*.36,.78,.856,.052,.064,.026,white);
-  ball(side*.45,.65,.854,.021,.028,.014,white);
-  ball(side*.19,.3,1.33,.035,.026,.021,nostril);
-  ball(side*.34,.25,1.04,.17,.085,.045,mat(0xf5d8dc,.9));
-  if(petLevel>=26)cone(side*.43,1.21,-.1,.1+Math.min(1,(petLevel-20)/70)*.09,.15+Math.min(1,(petLevel-20)/70)*.57,horn,-side*(adult?.43:.3),-.16);
-  if(petLevel>=28)cone(side*.58,.99,-.3,.08,Math.min(.38,(petLevel-22)*.012),ridge,-side*.65);
-  // Four sturdy paws with ivory claws.
-  ball(side*.53,-.9,.31,.3,.22,.36,skin);
-  if(petLevel>=16)for(let toe=-1;toe<=1;toe++)cone(side*.53+toe*.145,-1.045,.61,.035+Math.min(.03,(petLevel-10)*.0006),.06+Math.min(.2,(petLevel-10)*.003),claw,Math.PI/2);
-  ball(side*.65,-.23,.16,.235,.43,.23,skin).rotation.z=side*.27;
-  ball(side*.72,-.53,.35,.19,.16,.23,skin);
-  // Curved iridescent lavender wing with pale leading-edge spar.
-  const wing=new THREE.Group();wing.position.set(side*.49,.23,-.19);wing.userData.wing=true;wing.userData.side=side;wing.visible=petLevel>=36;g.add(wing);
-  const reach=.24+Math.max(0,Math.min(65,petLevel-35))*.019;
-  const sh=new THREE.Shape();sh.moveTo(0,0);
-  sh.quadraticCurveTo(side*reach*.4,reach*.68,side*reach,reach*.7);
-  sh.quadraticCurveTo(side*reach*1.13,reach*.24,side*reach*.97,-reach*.27);
-  sh.quadraticCurveTo(side*reach*.73,-reach*.05,side*reach*.59,-reach*.37);
-  sh.quadraticCurveTo(side*reach*.33,-reach*.12,side*reach*.18,-reach*.31);
-  sh.quadraticCurveTo(side*reach*.09,-reach*.12,0,0);
-  const membrane=new THREE.Mesh(new THREE.ShapeGeometry(sh,14),new THREE.MeshStandardMaterial({color:adult?0x9ca5f2:0xc5b9f2,side:THREE.DoubleSide,roughness:.46,metalness:.12,transparent:true,opacity:.94}));
-  membrane.position.z=-.15;wing.add(membrane);
-  for(let rib=1;rib<=3;rib++){const a=rib/4;const length=reach*(.65+a*.3);const spar=new THREE.Mesh(new THREE.CylinderGeometry(.013,.033,length,8),ridge);spar.position.set(side*reach*a*.55,reach*.13,-.12);spar.rotation.z=-side*(.36+a*.6);wing.add(spar)}
-  const bone=new THREE.Mesh(new THREE.CylinderGeometry(.025,.045,reach*1.1,8),ridge);bone.position.set(side*reach*.48,reach*.35,-.13);bone.rotation.z=-side*.8;wing.add(bone);
-  wing.rotation.y=side*.14;
+  // Eyes are embedded in the facial surface, with iris depth and catchlights.
+  ell(head,side*.37,.1,.465,.218,.246,.112,skin);
+  ell(head,side*.39,.11,.53,.18,.21,.088,sapphire);
+  const iris=ell(head,side*.41,.1,.607,.091,.15,.034,pupil);iris.userData.eye=true;
+  ell(head,side*.365,.188,.64,.048,.057,.018,highlight);
+  ell(head,side*.46,.055,.639,.019,.023,.009,highlight);
+  const eyelid=ell(head,side*.38,.3,.525,.225,.025,.1,highlight);eyelid.userData.eyelid=true;
+  ell(head,side*.2,-.28,.94,.028,.022,.012,mouth);
+  ell(head,side*.48,-.19,.48,.14,.065,.04,belly);
+  // Swept-back ivory horns with organic segmented taper.
+  const hornLength=.17+Math.max(0,level-19)*.008;
+  if(level>=21){
+   tapered(head,[side*.43,.42,-.12],[side*(.48+hornLength*.3),.42+hornLength,-.29-hornLength*.4],.12,.018,horn);
+   ell(head,side*.43,.43,-.12,.13,.09,.12,horn);
+  }
+  if(level>=30)tapered(head,[side*.61,.1,-.22],[side*(.72+Math.min(.22,level*.002)),.33,-.45],.07,.012,ridge);
+  // Curved haunches and paws with individual ivory claws.
+  ell(g,side*.48,-.86,.1,.29,.33,.34,skin);
+  ell(g,side*.5,-1.1,.36,.29,.15,.31,highlight);
+  ell(g,side*.61,-.23,.15,.23,.4,.25,skin).rotation.z=side*.27;
+  ell(g,side*.69,-.54,.38,.2,.16,.25,highlight);
+  if(level>=16)for(let toe=-1;toe<=1;toe++){
+   tapered(g,[side*.5+toe*.15,-1.13,.57],[side*.5+toe*.15,-1.2,.7],.048,.008,horn);
+  }
+  // Batlike membrane with articulated ribs, growing continuously.
+  const wing=new THREE.Group();wing.position.set(side*.46,.04,-.36);
+  wing.userData.wing=true;wing.userData.side=side;wing.visible=level>=36;g.add(wing);
+  const span=.34+Math.max(0,level-35)*.026;
+  const shape=new THREE.Shape();shape.moveTo(0,0);
+  shape.bezierCurveTo(side*span*.28,span*.83,side*span*.7,span*.97,side*span,span*.85);
+  shape.bezierCurveTo(side*span*1.04,span*.44,side*span*.89,span*.19,side*span*.83,-span*.22);
+  shape.quadraticCurveTo(side*span*.64,-span*.03,side*span*.58,-span*.3);
+  shape.quadraticCurveTo(side*span*.4,-span*.08,side*span*.29,-span*.25);
+  shape.quadraticCurveTo(side*span*.1,-span*.12,0,0);
+  const membrane=new THREE.Mesh(new THREE.ShapeGeometry(shape,24),lavender);membrane.position.z=-.03;wing.add(membrane);
+  for(let rib=0;rib<4;rib++){
+   const fraction=.32+rib*.21;
+   tapered(wing,[0,0,.002],[side*span*fraction,span*(.8-rib*.18),.004],.027,.008,ridge);
+  }
  }
- // Iridescent overlapping scales create depth rather than a smooth toy surface.
- if(petLevel>=21)for(let row=0;row<7;row++)for(let col=-3;col<=3;col++){
-  const yy=.02-row*.17,xx=col*.155+(row%2)*.075;
-  const radial=1-(xx/.75)**2-(yy+.38)**2/1.2;
-  if(radial<.12)continue;
-  const scale=ball(xx,yy,.49+Math.sqrt(radial)*.075,.085,.105,.022,row%3===0?ridge:skin);
-  scale.rotation.z=col*.06;
+ // Curved segmented tail, each segment blends into the next.
+ const tail=new THREE.Group();tail.userData.tail=true;g.add(tail);
+ for(let i=0;i<10;i++){
+  const q=i/9;
+  ell(tail,.1*Math.sin(q*3),-.85-q*.7,-.42-q*1.35,.32*(1-q)+.055,.24*(1-q)+.055,.32*(1-q)+.055,skin);
  }
- // Small pearl scales and gradually larger dorsal fins.
- if(petLevel>=28)for(let i=0;i<Math.min(9,1+Math.floor((petLevel-28)/4));i++)cone(0,.98-i*.23,-.55,.11+i*.003,.2+i*.01,ridge,.08);
- // Thick tapering tail.
- for(let i=0;i<Math.min(6,1+Math.floor(Math.max(0,petLevel-20)/3));i++){const t=i/6;ball(0,-.72-i*.12,-.46-i*.22,.29*(1-t)+.045,.25*(1-t)+.045,.29*(1-t)+.045,skin)}
- if(petLevel>=30)cone(0,-1.34,-1.71,.17,.37,ridge,0,-.75);
- if(adult){cone(0,1.37,.15,.12,.34,horn);cone(-.2,.98,-.46,.1,.3,ridge);cone(.2,.98,-.46,.1,.3,ridge)}
- if(petLevel>=76){
-  const fire=new THREE.Group();fire.userData.fire=true;fire.position.set(0,.2,1.33);g.add(fire);
-  const flame=new THREE.Mesh(new THREE.ConeGeometry(.08+petLevel*.002,.12+Math.max(0,petLevel-75)*.022,12),new THREE.MeshBasicMaterial({color:0xffa42a,transparent:true,opacity:.85}));
+ tapered(tail,[.02,-1.56,-1.73],[.08,-1.66,-1.94],.13,.005,ridge);
+ // Back crest reads as dragon anatomy, even on the earliest baby.
+ for(let i=0;i<6;i++){
+  const t=i/5,scale=.12+t*.07+Math.max(0,level-25)*.0008;
+  const fin=new THREE.Mesh(new THREE.ConeGeometry(scale,scale*2,5),ridge);
+  fin.position.set(0,.45-i*.23,-.55-i*.08);fin.rotation.x=-.48;g.add(fin);
+ }
+ if(level>=76){
+  const fire=new THREE.Group();fire.userData.fire=true;fire.position.set(0,.04,1.07);head.add(fire);
+  const flame=new THREE.Mesh(new THREE.ConeGeometry(.1+level*.001,.16+(level-75)*.02,12),new THREE.MeshBasicMaterial({color:0xffa32d,transparent:true,opacity:.9}));
   flame.rotation.x=Math.PI/2;flame.position.z=.3;fire.add(flame);
-  const core=new THREE.Mesh(new THREE.ConeGeometry(.045,.08+Math.max(0,petLevel-70)*.012,12),new THREE.MeshBasicMaterial({color:0xffe789,transparent:true,opacity:.9}));
-  core.rotation.x=Math.PI/2;core.position.z=.28;fire.add(core);
  }
-
- addGrowthDetails(g,petLevel,false);
- g.userData.stageScale=stageScale;g.scale.setScalar(stageScale);g.rotation.y=-.12;
+ addGrowthDetails(g,level,false);
+ const stageScale=.74+Math.max(0,level-10)*.0068;
+ g.userData.stageScale=stageScale;g.scale.setScalar(stageScale);
  return g;
 }
 let dragonModel=null;
