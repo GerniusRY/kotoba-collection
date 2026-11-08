@@ -1,0 +1,811 @@
+{
+  "status": "art_direction_only_not_3d_assets",
+  "levels": [
+    {
+      "level": 0,
+      "phase": "egg",
+      "visualChange": "無傷の真珠色の卵",
+      "assetStatus": "not_authored"
+    },
+    {
+      "level": 1,
+      "phase": "egg",
+      "visualChange": "金色の微細な紋様",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 2,
+      "phase": "egg",
+      "visualChange": "青い発光点",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 3,
+      "phase": "egg",
+      "visualChange": "貝殻状の光沢",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 4,
+      "phase": "egg",
+      "visualChange": "上部の小さな亀裂",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 5,
+      "phase": "egg",
+      "visualChange": "亀裂からの光",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 6,
+      "phase": "egg",
+      "visualChange": "左右に伸びる亀裂",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 7,
+      "phase": "egg",
+      "visualChange": "殻の脈動",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 8,
+      "phase": "egg",
+      "visualChange": "内側のシルエット",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 9,
+      "phase": "egg",
+      "visualChange": "亀裂の発光強化",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 10,
+      "phase": "egg",
+      "visualChange": "孵化直前の大きな亀裂",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 11,
+      "phase": "hatchling",
+      "visualChange": "殻を破って誕生",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 12,
+      "phase": "hatchling",
+      "visualChange": "瞳の光沢",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 13,
+      "phase": "hatchling",
+      "visualChange": "頬の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 14,
+      "phase": "hatchling",
+      "visualChange": "額の青い小角",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 15,
+      "phase": "hatchling",
+      "visualChange": "前脚の爪",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 16,
+      "phase": "hatchling",
+      "visualChange": "尻尾の先端",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 17,
+      "phase": "hatchling",
+      "visualChange": "背中の小さな棘",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 18,
+      "phase": "hatchling",
+      "visualChange": "耳ひれ",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 19,
+      "phase": "hatchling",
+      "visualChange": "翼の芽",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 20,
+      "phase": "hatchling",
+      "visualChange": "腹部の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 21,
+      "phase": "hatchling",
+      "visualChange": "角の輪郭",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 22,
+      "phase": "hatchling",
+      "visualChange": "尾の曲線",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 23,
+      "phase": "hatchling",
+      "visualChange": "翼膜の初出現",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 24,
+      "phase": "hatchling",
+      "visualChange": "首の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 25,
+      "phase": "hatchling",
+      "visualChange": "後脚の爪",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 26,
+      "phase": "hatchling",
+      "visualChange": "頬の模様",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 27,
+      "phase": "hatchling",
+      "visualChange": "額の紋様",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 28,
+      "phase": "hatchling",
+      "visualChange": "翼骨の節",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 29,
+      "phase": "hatchling",
+      "visualChange": "背びれの増加",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 30,
+      "phase": "hatchling",
+      "visualChange": "全身の体格",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 31,
+      "phase": "juvenile",
+      "visualChange": "首の伸長",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 32,
+      "phase": "juvenile",
+      "visualChange": "肩の筋肉",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 33,
+      "phase": "juvenile",
+      "visualChange": "翼の第一関節",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 34,
+      "phase": "juvenile",
+      "visualChange": "翼の第二関節",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 35,
+      "phase": "juvenile",
+      "visualChange": "翼膜の透明度",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 36,
+      "phase": "juvenile",
+      "visualChange": "翼端の爪",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 37,
+      "phase": "juvenile",
+      "visualChange": "角の後方カーブ",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 38,
+      "phase": "juvenile",
+      "visualChange": "尾の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 39,
+      "phase": "juvenile",
+      "visualChange": "胸の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 40,
+      "phase": "juvenile",
+      "visualChange": "前脚の筋肉",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 41,
+      "phase": "juvenile",
+      "visualChange": "後脚の筋肉",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 42,
+      "phase": "juvenile",
+      "visualChange": "背骨の棘",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 43,
+      "phase": "juvenile",
+      "visualChange": "額の宝石",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 44,
+      "phase": "juvenile",
+      "visualChange": "頬の角",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 45,
+      "phase": "juvenile",
+      "visualChange": "翼の青い縁",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 46,
+      "phase": "juvenile",
+      "visualChange": "尻尾の先端装飾",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 47,
+      "phase": "juvenile",
+      "visualChange": "首の青いライン",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 48,
+      "phase": "juvenile",
+      "visualChange": "翼の膜模様",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 49,
+      "phase": "juvenile",
+      "visualChange": "胸の金色装飾",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 50,
+      "phase": "juvenile",
+      "visualChange": "肩の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 51,
+      "phase": "juvenile",
+      "visualChange": "背中の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 52,
+      "phase": "juvenile",
+      "visualChange": "顎の輪郭",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 53,
+      "phase": "juvenile",
+      "visualChange": "脚の爪の伸長",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 54,
+      "phase": "juvenile",
+      "visualChange": "翼幅の拡大",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 55,
+      "phase": "juvenile",
+      "visualChange": "尾の長さ",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 56,
+      "phase": "juvenile",
+      "visualChange": "胸郭の成長",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 57,
+      "phase": "juvenile",
+      "visualChange": "首の厚み",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 58,
+      "phase": "juvenile",
+      "visualChange": "翼の第三関節",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 59,
+      "phase": "juvenile",
+      "visualChange": "額の紋章",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 60,
+      "phase": "juvenile",
+      "visualChange": "全身のプロポーション",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 61,
+      "phase": "adult",
+      "visualChange": "角の延長",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 62,
+      "phase": "adult",
+      "visualChange": "翼幅の拡大",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 63,
+      "phase": "adult",
+      "visualChange": "胸の装甲",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 64,
+      "phase": "adult",
+      "visualChange": "前脚の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 65,
+      "phase": "adult",
+      "visualChange": "後脚の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 66,
+      "phase": "adult",
+      "visualChange": "尾の装甲",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 67,
+      "phase": "adult",
+      "visualChange": "翼端の装飾",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 68,
+      "phase": "adult",
+      "visualChange": "額の宝石",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 69,
+      "phase": "adult",
+      "visualChange": "背中の棘",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 70,
+      "phase": "adult",
+      "visualChange": "首の装甲",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 71,
+      "phase": "adult",
+      "visualChange": "翼の発光脈",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 72,
+      "phase": "adult",
+      "visualChange": "肩の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 73,
+      "phase": "adult",
+      "visualChange": "尾のひれ",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 74,
+      "phase": "adult",
+      "visualChange": "角の金色模様",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 75,
+      "phase": "adult",
+      "visualChange": "翼膜の虹彩",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 76,
+      "phase": "adult",
+      "visualChange": "胸の宝石",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 77,
+      "phase": "adult",
+      "visualChange": "足の爪",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 78,
+      "phase": "adult",
+      "visualChange": "頬の鱗",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 79,
+      "phase": "adult",
+      "visualChange": "額の冠",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 80,
+      "phase": "adult",
+      "visualChange": "尾の棘",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 81,
+      "phase": "adult",
+      "visualChange": "翼の第四骨",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 82,
+      "phase": "adult",
+      "visualChange": "首の金色ライン",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 83,
+      "phase": "adult",
+      "visualChange": "背中の青い結晶",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 84,
+      "phase": "adult",
+      "visualChange": "翼の模様",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 85,
+      "phase": "adult",
+      "visualChange": "尾の青い光",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 86,
+      "phase": "adult",
+      "visualChange": "胸の発光",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 87,
+      "phase": "adult",
+      "visualChange": "肩の装飾",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 88,
+      "phase": "adult",
+      "visualChange": "角の枝分かれ",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 89,
+      "phase": "adult",
+      "visualChange": "背びれの延長",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 90,
+      "phase": "adult",
+      "visualChange": "翼端の青い結晶",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 91,
+      "phase": "adult",
+      "visualChange": "前脚の装甲",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 92,
+      "phase": "adult",
+      "visualChange": "後脚の装甲",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 93,
+      "phase": "adult",
+      "visualChange": "額の結晶冠",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 94,
+      "phase": "adult",
+      "visualChange": "尾の発光輪",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 95,
+      "phase": "adult",
+      "visualChange": "胸の金色ライン",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 96,
+      "phase": "adult",
+      "visualChange": "翼の縁取り",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 97,
+      "phase": "adult",
+      "visualChange": "首の鱗の精緻化",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 98,
+      "phase": "adult",
+      "visualChange": "翼の広がり",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 99,
+      "phase": "adult",
+      "visualChange": "最終進化前の光",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    },
+    {
+      "level": 100,
+      "phase": "legendary",
+      "visualChange": "伝説形態：冠・翼・尾が連動して発光",
+      "assetStatus": "not_authored",
+      "requires": "authored mesh/material/rig change",
+      "review": "front and three-quarter renders at iPhone size"
+    }
+  ]
+}
